@@ -14,9 +14,9 @@
   },
   "permissions": [
     "activeTab"
-  ],
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": false
-  }
+  ]
+  // "background": {
+  //   "scripts": ["background.js"],
+  //   "persistent": false
+  // }
 }
