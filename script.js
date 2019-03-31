@@ -1,4 +1,3 @@
-
 const findAllDom = function() {
   class actionFindAllDom {
     constructor() {
@@ -65,16 +64,3 @@ setTimeout(() => {
     `
   });
 }, 4000);
-
-// setTimeout(() => {
-//   whale.tabs.executeScript({
-//     // 'document.body.innerHTML=`'+editHTML+'`'
-//     code: `document.body.innerHTML=\`${editHTML}\``
-//   });
-// }, 2000);
-
-// setTimeout(() => {
-//   whale.tabs.executeScript({
-//     code: 'document.body.innerHTML=`'+defaultElement+'`'
-//   });
-// }, 4000);
