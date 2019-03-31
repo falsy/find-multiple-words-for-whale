@@ -24,10 +24,21 @@ const findAllDom = function() {
       });
     }
 
-    searchDomElement() {
-      this.body.childNodes.forEach(node => {
-        this.insertFmwElement(node);
-      });
+    deleteFmwElement(el) {
+      for(const node of el.children) {
+        if(String(node.className).indexOf('fmw-style') !== -1) {
+          node.outerHTML = this.findWord;
+        } else {
+          if(node.children && node.children.length && this.exceptEl.indexOf(node.nodeName) === -1) {
+            this.deleteFmwElement(node);
+          }
+        }
+      }
+    }
+
+    searchDomElement(isInsert = false) {
+      this.deleteFmwElement(this.body);
+      if(isInsert) this.body.childNodes.forEach(node => this.insertFmwElement(node));
     }
   };
   return actionFindAllDom;
@@ -42,10 +53,18 @@ whale.tabs.executeScript({
 setTimeout(() => {
   whale.tabs.executeScript({
     code: `
-    fmwClass.searchDomElement();
+    fmwClass.searchDomElement(true);
     `
   });
 }, 2000);
+
+setTimeout(() => {
+  whale.tabs.executeScript({
+    code: `
+    fmwClass.searchDomElement(false);
+    `
+  });
+}, 4000);
 
 // setTimeout(() => {
 //   whale.tabs.executeScript({
