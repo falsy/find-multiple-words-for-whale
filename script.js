@@ -1,3 +1,18 @@
+const inputEl = document.getElementById('keyword');
+let keywords = [];
+
+inputEl.addEventListener('keydown', (e) => {
+  setTimeout(() => {
+    if(e.keyCode === 13 && inputEl.value) {
+      keywords = inputEl.value.split(',');
+      keywords.forEach((keyword, i) => {
+        keywords[i] = keyword.trim();
+      });
+    }
+  });
+});
+
+
 const findAllDom = function() {
   class actionFindAllDom {
     constructor() {
@@ -25,7 +40,7 @@ const findAllDom = function() {
 
     deleteFmwElement(el) {
       for(const node of el.children) {
-        if(String(node.className).indexOf('fmw-style') !== -1) {
+        if(String(node.className).indexOf('fmw-style') !== -1 && node.nodeName === 'I') {
           node.outerHTML = this.findWord;
         } else {
           if(node.children && node.children.length && this.exceptEl.indexOf(node.nodeName) === -1) {
