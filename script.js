@@ -8,7 +8,7 @@ const findAllDom = function() {
     insertFmwElement(el) {
       el.childNodes.forEach(node => {
         if(node.nodeName === '#text' && this.exceptEl.indexOf(node.parentNode.nodeName) === -1
-          && node.parentNode.className !== 'fmw-style-container') {
+          && node.parentNode.className !== 'fmw-style-container' && node.parentNode.className.indexOf('fmw-style') === -1) {
           if(node.data.replace(/\t|\n| /g, '') !== "") {
             this.replaceElement(node);
           }
@@ -29,18 +29,16 @@ const findAllDom = function() {
       this.findWords.forEach((word, i) => {
         if(nodeText.indexOf(word) !== -1) {
           const reg = new RegExp(word, 'gm');
-          nodeText = nodeText.replace(reg, `
-            <i class="fmw-style fmw-style-${i}">${word}</i>
-          `);
-          this.scrollMarkElement.innerHTML += `
-            <i class="fmw-style-scroll-mark fmw-style-${i}" style="top: ${posMark}px;"><i>
-          `;
+          nodeText = nodeText.replace(reg, `<i class="fmw-style fmw-style-${i}">${word}</i>`);
+          this.scrollMark.innerHTML += `<i class="fmw-style-scroll-mark fmw-style-${i}" style="top: ${posMark}px;"><i>`;
         }
       });
 
       if(node.data !== nodeText) {
         fmwElement.innerHTML = nodeText;
         node.parentNode.replaceChild(fmwElement, node);
+        console.log(node);
+        console.log(fmwElement);
       }
     }
 
@@ -54,20 +52,20 @@ const findAllDom = function() {
     }
 
     deleteFmwElement(el) {
+      if(!el.children) return;
       for(const node of el.children) {
+        if(node.children && node.children.length && this.exceptEl.indexOf(node.nodeName) === -1) {
+          this.deleteFmwElement(node);
+        }
         if(String(node.className).indexOf('fmw-style-container') !== -1 && node.nodeName === 'I') {
           node.outerHTML = node.textContent;
-        } else {
-          if(node.children && node.children.length && this.exceptEl.indexOf(node.nodeName) === -1) {
-            this.deleteFmwElement(node);
-          }
         }
       }
     }
 
     searchDomElement(keywords) {
-      this.scrollMarkElement = document.getElementById('fwm-scroll');
-      this.scrollMarkElement.innerHTML = '';
+      this.scrollMark = document.getElementById('fwm-scroll');
+      this.scrollMark.innerHTML = '';
       this.deleteFmwElement(this.body);
       if(keywords.length) {
         this.findWords = keywords;
