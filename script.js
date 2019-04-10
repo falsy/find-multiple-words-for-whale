@@ -37,8 +37,6 @@ const findAllDom = function() {
       if(node.data !== nodeText) {
         fmwElement.innerHTML = nodeText;
         node.parentNode.replaceChild(fmwElement, node);
-        console.log(node);
-        console.log(fmwElement);
       }
     }
 
@@ -52,21 +50,34 @@ const findAllDom = function() {
     }
 
     deleteFmwElement(el) {
-      if(!el.children) return;
-      for(const node of el.children) {
-        if(node.children && node.children.length && this.exceptEl.indexOf(node.nodeName) === -1) {
-          this.deleteFmwElement(node);
+      let children = el.children;
+      let i = children.length - 1;
+      while(i >= 0) {
+        if(children[i].children && children[i].children.length && this.exceptEl.indexOf(children[i].nodeName) === -1) {
+          this.deleteFmwElement(children[i]);
         }
-        if(String(node.className).indexOf('fmw-style-container') !== -1 && node.nodeName === 'I') {
-          node.outerHTML = node.textContent;
+        if(String(children[i].className).indexOf('fmw-style-container') !== -1 && children[i].nodeName === 'I') {
+          children[i].outerHTML = children[i].textContent;
         }
+        i--;
       }
+
+      // 메모] 아래의 코드는 알 수 없는 이유로 약간의 오류 상황이 만들어짐.
+      // for(const node of el.children) {
+      //   if(node.children && node.children.length && this.exceptEl.indexOf(node.nodeName) === -1) {
+      //     this.deleteFmwElement(node);
+      //   }
+      //   if(String(node.className).indexOf('fmw-style-container') !== -1 && node.nodeName === 'I') {
+      //     node.outerHTML = node.textContent;
+      //   }
+      // }
     }
 
     searchDomElement(keywords) {
       this.scrollMark = document.getElementById('fwm-scroll');
       this.scrollMark.innerHTML = '';
       this.deleteFmwElement(this.body);
+      // this.deleteFmwElement(this.body);
       if(keywords.length) {
         this.findWords = keywords;
         this.body.childNodes.forEach(node => this.insertFmwElement(node));
