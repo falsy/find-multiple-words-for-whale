@@ -14,7 +14,15 @@
   },
   "permissions": [
     "activeTab"
-  ]
+  ],
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Alt+F",
+        "mac": "Alt+F"
+      }
+    }
+  },
   // "background": {
   //   "scripts": ["background.js"],
   //   "persistent": false
