@@ -131,6 +131,16 @@ const findAllDom = function() {
 };
 
 const inputEl = document.getElementById('keyword');
+
+inputEl.addEventListener('focus', (e) => {
+  whale.tabs.executeScript({
+    code: `
+      window.fmwClass = new ${findAllDom()}();
+      fmwClass.prependStyleSheet();
+    `
+  });
+});
+
 inputEl.addEventListener('keyup', (e) => {
   if(e.keyCode === 13) {
     let keywords = inputEl.value.split(',');
@@ -146,25 +156,3 @@ inputEl.addEventListener('keyup', (e) => {
     });
   }
 });
-
-inputEl.addEventListener('focus', (e) => {
-  whale.tabs.executeScript({
-    code: `
-      window.fmwClass = new ${findAllDom()}();
-      fmwClass.prependStyleSheet();
-    `
-  });
-});
-
-// whale.sidebarAction.onClicked.addListener(result => {
-//   if(result.opened) {
-//     inputEl.focus();
-
-//     whale.tabs.executeScript({
-//       code: `
-//         window.fmwClass = new ${findAllDom()}();
-//         fmwClass.prependStyleSheet();
-//       `
-//     });
-//   }
-// });
