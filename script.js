@@ -147,15 +147,24 @@ inputEl.addEventListener('keyup', (e) => {
   }
 });
 
-whale.sidebarAction.onClicked.addListener(result => {
-  if(result.opened) {
-    inputEl.focus();
-
-    whale.tabs.executeScript({
-      code: `
-        window.fmwClass = new ${findAllDom()}();
-        fmwClass.prependStyleSheet();
-      `
-    });
-  }
+inputEl.addEventListener('focus', (e) => {
+  whale.tabs.executeScript({
+    code: `
+      window.fmwClass = new ${findAllDom()}();
+      fmwClass.prependStyleSheet();
+    `
+  });
 });
+
+// whale.sidebarAction.onClicked.addListener(result => {
+//   if(result.opened) {
+//     inputEl.focus();
+
+//     whale.tabs.executeScript({
+//       code: `
+//         window.fmwClass = new ${findAllDom()}();
+//         fmwClass.prependStyleSheet();
+//       `
+//     });
+//   }
+// });
