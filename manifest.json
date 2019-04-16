@@ -3,13 +3,13 @@
   "name": "여러 단어 찾기",
   "version": "1.0.0",
   "description": "문서에서 여러 단어를 찾습니다.",
-  "icons": {
+  // "icons": {
     // "128": "icon_128.png"
-  },
+  // },
   "sidebar_action": {
     "default_page": "index.html",
     "default_icon": {                // 필수
-        // "128": "icon_128.png"
+      "32": "imgs/fmw-icon-32.png"
     },
     "default_title": "여러 단어 찾기",
     "use_navigation_bar": false
