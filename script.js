@@ -58,16 +58,6 @@ const findAllDom = function() {
         }
         i--;
       }
-
-      // [메모] 아래의 코드는 알 수 없는 이유로 약간의 오류 상황이 만들어짐.
-      // for(const node of el.children) {
-      //   if(node.children && node.children.length && this.exceptEl.indexOf(node.nodeName) === -1) {
-      //     this.deleteFmwElement(node);
-      //   }
-      //   if(String(node.className).indexOf('fmw-style-container') !== -1 && node.nodeName === 'I') {
-      //     node.outerHTML = node.textContent;
-      //   }
-      // }
     }
 
     searchDomElement(keywords) {
@@ -80,7 +70,7 @@ const findAllDom = function() {
 
     prependStyleSheet() {
       if(document.getElementById('fwm-css')) return;
-      const color = ['#AEDFDB', '#F4D94E', '#F38D9B', '#21B7A9', '#99d45D'];
+      const color = ['#AEDFDB', '#F4D94E', '#F38D9B', '#BEA6F9', '#99d45D'];
       const fmwStyleElement = document.createElement('style');
             fmwStyleElement.id = 'fwm-css';
             fmwStyleElement.innerHTML = `
@@ -144,6 +134,7 @@ inputEl.addEventListener('focus', (e) => {
 inputEl.addEventListener('keyup', (e) => {
   if(e.keyCode === 13) {
     let keywords = inputEl.value.split(',');
+        keywords = keywords.length > 5 ? keywords.slice(0, 5) : keywords;
         keywords = keywords.map((keyword) => {
           return keyword.trim();
         }).filter(Boolean);
