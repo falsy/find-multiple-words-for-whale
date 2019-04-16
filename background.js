@@ -1,5 +1,5 @@
-// chrome.commands.onCommand.addListener(function(command) {
-//   console.log('Command:', command);
-// });
-
-// console.log('ok');
+whale.commands.onCommand.addListener((command) => {
+  if (command === 'open-sidebar') {
+    whale.sidebarAction.show();
+  }
+});

@@ -6,25 +6,35 @@
   "icons": {
     // "128": "icon_128.png"
   },
-  "browser_action": {
-    "default_popup": "index.html",
+  "sidebar_action": {
+    "default_page": "index.html",
     "default_icon": {                // 필수
         // "128": "icon_128.png"
-    }
+    },
+    "default_title": "여러 단어 찾기",
+    "use_navigation_bar": false
   },
   "permissions": [
+    "<all_urls>",
     "activeTab"
   ],
   "commands": {
-    "_execute_browser_action": {
+    "open-sidebar": {
       "suggested_key": {
         "default": "Alt+F",
         "mac": "Alt+F"
-      }
+      },
+      "description": "사이드바 On/Off 단축키"
     }
+    // "_execute_sidebar_action": {
+    //   "suggested_key": {
+    //     "default": "Alt+Shift+F",
+    //     "mac": "Alt+Shift+F"
+    //   }
+    // }
   },
-  // "background": {
-  //   "scripts": ["background.js"],
-  //   "persistent": false
-  // }
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  }
 }

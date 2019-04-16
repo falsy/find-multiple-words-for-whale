@@ -27,7 +27,7 @@ const findAllDom = function() {
       this.findWords.forEach((word, i) => {
         const reg = new RegExp(word, 'gim');
         if(reg.test(nodeText)) {
-          nodeText = nodeText.replace(reg, `<i class="fmw-style fmw-style-${i}">${word}</i>`);
+          nodeText = nodeText.replace(reg, `<i class="fmw-style fmw-style-${i}">\$&</i>`);
         }
       });
 
@@ -130,13 +130,6 @@ const findAllDom = function() {
   return actionFindAllDom;
 };
 
-whale.tabs.executeScript({
-  code: `
-    window.fmwClass = new ${findAllDom()}();
-    fmwClass.prependStyleSheet();
-  `
-});
-
 const inputEl = document.getElementById('keyword');
 inputEl.addEventListener('keyup', (e) => {
   if(e.keyCode === 13) {
@@ -154,6 +147,15 @@ inputEl.addEventListener('keyup', (e) => {
   }
 });
 
-window.onload = () => {
-  inputEl.focus();
-};
+whale.sidebarAction.onClicked.addListener(result => {
+  if(result.opened) {
+    inputEl.focus();
+
+    whale.tabs.executeScript({
+      code: `
+        window.fmwClass = new ${findAllDom()}();
+        fmwClass.prependStyleSheet();
+      `
+    });
+  }
+});
