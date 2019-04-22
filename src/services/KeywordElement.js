@@ -1,6 +1,5 @@
-import { COLOR } from '../constants/index.js';
-
 export default class KeywordElement {
+
   constructor() {
     this.container = document.getElementById('keyword-container');
   }
@@ -12,17 +11,21 @@ export default class KeywordElement {
   }
 
   appendKeywordList(keywords) {
-    keywords = JSON.parse(keywords);
-    this.removeKeywordList();
     const listContainer = document.createElement('ul');
+    const listTitle = document.createElement('h1');
+          listTitle.appendChild(document.createTextNode('keyword'));
+
+    this.container.appendChild(listTitle);
+
     keywords.forEach((keyword, i) => {
       const list = document.createElement('li');
       const text = document.createElement('p');
-            text.setAttribute('style', `background: ${COLOR[i]};`);
-      text.appendChild(document.createTextNode(keyword));
-      list.appendChild(text);
+            text.appendChild(document.createTextNode(keyword));
+            list.appendChild(text);
+
       listContainer.appendChild(list);
     });
+
     this.container.appendChild(listContainer);
   }
 }

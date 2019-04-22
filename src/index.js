@@ -31,16 +31,18 @@ class Fmw {
             keywords = keywords.map((keyword) => {
               return keyword.trim();
             }).filter(Boolean);
-            keywords = JSON.stringify(keywords);
 
         whale.tabs.executeScript({
           code: `
-            window.fmwClass.searchDomElement(${keywords});
+            window.fmwClass.searchDomElement(${JSON.stringify(keywords)});
           `
         });
 
-        this.keywordList.appendKeywordList(keywords);
-        this.input.value = '';
+        this.keywordList.removeKeywordList();
+        if(keywords.length) {
+          this.keywordList.appendKeywordList(keywords);
+          this.input.value = '';
+        }
 
         oneCallCheck = false;
         setTimeout(() => oneCallCheck = true, 300);
