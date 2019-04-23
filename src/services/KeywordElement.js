@@ -12,7 +12,7 @@ export default class KeywordElement {
 
   appendKeywordList(keywords) {
     const listContainer = document.createElement('ul');
-    const listTitle = document.createElement('h1');
+    const listTitle = document.createElement('h2');
           listTitle.appendChild(document.createTextNode('keyword'));
 
     this.container.appendChild(listTitle);

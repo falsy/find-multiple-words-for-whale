@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "여러 단어 찾기",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "문서에서 여러 단어를 찾습니다.",
   "icons": {
     "32": "src/imgs/fmw-icon-32.png",
@@ -12,7 +12,7 @@
     "default_icon": {
       "32": "src/imgs/fmw-icon-32.png"
     },
-    "default_title": "여러 단어 찾기",
+    "default_title": "단어 찾기",
     "use_navigation_bar": false
   },
   "permissions": [
@@ -22,8 +22,8 @@
   "commands": {
     "open-sidebar": {
       "suggested_key": {
-        "default": "Alt+F",
-        "mac": "Alt+F"
+        "default": "Alt+W",
+        "mac": "Alt+W"
       },
       "description": "사이드바 On/Off 단축키"
     }
