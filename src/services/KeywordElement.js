@@ -10,6 +10,21 @@ export default class KeywordElement {
     }
   }
 
+  createCloseSvg(idx) {
+    const xmlns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(xmlns, "svg");
+          svg.setAttribute('class', `keyword-list-close-btn list-close-idx-${idx}`);
+          svg.setAttributeNS(null, 'width', '24');
+          svg.setAttributeNS(null, 'height', '24');
+          svg.setAttributeNS(null, 'fill-rule', 'evenodd');
+          svg.setAttributeNS(null, 'clip-rule', 'evenodd');
+    const path = document.createElementNS (xmlns, "path");
+          path.setAttributeNS(null, 'd', 'M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z');
+
+    svg.appendChild(path);
+    return svg;
+  }
+
   appendKeywordList(keywords) {
     const listContainer = document.createElement('ul');
     const listTitle = document.createElement('h2');
@@ -22,6 +37,7 @@ export default class KeywordElement {
       const text = document.createElement('p');
             text.appendChild(document.createTextNode(keyword));
             list.appendChild(text);
+            list.appendChild(this.createCloseSvg(i));
 
       listContainer.appendChild(list);
     });
