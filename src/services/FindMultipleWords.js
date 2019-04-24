@@ -73,20 +73,8 @@ class FindMultipleWords {
     const fmwStyleElement = document.createElement('style');
           fmwStyleElement.id = 'fwm-css';
           fmwStyleElement.innerHTML = `
-            #fwm-scroll {
-              position: absolute;
-              top: 0;
-              right: 0;
-            }
             .fmw-style-container {
               font-style: normal;
-            }
-            .fmw-style-scroll-mark {
-              position: absolute;
-              width: 15px;
-              height: 2px;
-              background: inherit;
-              right: 0;
             }
             .fmw-style-container .fmw-style {
               font-style: normal;
