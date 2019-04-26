@@ -1,4 +1,4 @@
-import { COLOR, EXCEPT_ELEMENT } from './constants/index.js';
+import { COLOR } from './constants/index.js';
 import FindMultipleWords from './services/FindMultipleWords.js';
 import KeywordElement from './services/KeywordElement.js';
 
@@ -8,15 +8,76 @@ class Fmw {
     this.input = document.getElementById('keyword');
     this.keywordList = new KeywordElement();
     this.keywords = [];
+
+    this.whaleEventListener();
     this.eventListener();
+  }
+
+  initExecuteCode() {
+    whale.tabs.executeScript({
+      code: `
+        window.fmwClass = new ${FindMultipleWords}();
+      `
+    });
+
+    whale.tabs.insertCSS({
+      code: `
+        .fmw-style-container {
+          font-style: normal;
+        }
+        .fmw-style-container .fmw-style {
+          font-style: normal;
+          display: inline-block;
+          box-shadow: 1px 3px 3px rgba(0,0,0,0.2);
+          border-radius: 4px;
+          padding: 0 5px;
+          color: #000;
+        }
+        .fmw-style-0 {
+          background: ${COLOR[0]};
+        }
+        .fmw-style-1 {
+          background: ${COLOR[1]};
+        }
+        .fmw-style-2 {
+          background: ${COLOR[2]};
+        }
+        .fmw-style-3 {
+          background: ${COLOR[3]};
+        }
+        .fmw-style-4 {
+          background: ${COLOR[4]};
+        }
+      `
+    });
+  }
+
+  whaleEventListener() {
+    // 탭이 업데이트 되었을때, 다시 문서에서 단어를 검색하도록
+    whale.tabs.onUpdated.addListener((id, changeInfo) => {
+      if(changeInfo.status === 'complete') {
+        this.initExecuteCode();
+        this.searchExecute(this.keywords.length>0);
+      }
+    });
+
+    // 다른 탭이 활성화 되었을때, 다시 문서에서 단어를 검색하도록
+    whale.tabs.onActivated.addListener(() => {
+      this.initExecuteCode();
+      this.searchExecute(this.keywords.length>0);
+    });
+
+    // 사이드바가 활성화 되었을때
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        this.initExecuteCode();
+        this.input.focus();
+      }
+    });
   }
 
   eventListener() {
     let oneCallCheck = true;
-
-    this.input.addEventListener('focus', (e) => {
-      this.initExecute();
-    });
 
     this.input.addEventListener('keyup', (e) => {
       if(e.keyCode === 13 && oneCallCheck) {
@@ -34,17 +95,6 @@ class Fmw {
       }
     }, {
       capture: true
-    });
-  }
-
-  initExecute() {
-    whale.tabs.executeScript({
-      code: `
-        window.fmwClass = new ${FindMultipleWords}();
-        window.fmwClass.COLOR = "${COLOR}".split(',');
-        window.fmwClass.EXCEPT_ELEMENT = "${EXCEPT_ELEMENT}".split(",");
-        window.fmwClass.prependStyleSheet();
-      `
     });
   }
 
