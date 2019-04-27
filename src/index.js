@@ -7,19 +7,33 @@ class Fmw {
   constructor() {
     this.input = document.getElementById('keyword');
     this.keywordList = new KeywordElement();
+    this.activeTabList = [];
     this.keywords = [];
 
     this.whaleEventListener();
     this.eventListener();
   }
 
+  checkRedeclared() {
+    whale.windows.getCurrent({ populate: true }, (data) => {
+      const currentTabId = data.tabs.filter((tab) => {
+        return tab.active === true;
+      })[0].id;
+
+      if(this.activeTabList.indexOf(currentTabId) !== -1) return;
+      this.activeTabList.push(currentTabId);
+      this.initExecuteCode();
+    });
+  }
+
   initExecuteCode() {
+    // 탭 페이지에 FMW 클래스 초기화
     whale.tabs.executeScript({
       code: `
         window.fmwClass = new ${FindMultipleWords}();
       `
     });
-
+    // 탭 페이지에 CSS 추가
     whale.tabs.insertCSS({
       code: `
         .fmw-style-container {
@@ -63,14 +77,20 @@ class Fmw {
 
     // 다른 탭이 활성화 되었을때, 다시 문서에서 단어를 검색하도록
     whale.tabs.onActivated.addListener(() => {
-      this.initExecuteCode();
+      this.checkRedeclared();
       this.searchExecute(this.keywords.length>0);
+    });
+
+    // 탭이 종료되었을때
+    whale.tabs.onRemoved.addListener((id) => {
+      const idx = this.activeTabList.indexOf(id);
+      this.activeTabList.splice(idx, 1);
     });
 
     // 사이드바가 활성화 되었을때
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
-        this.initExecuteCode();
+        this.checkRedeclared();
         this.input.focus();
       }
     });
@@ -88,10 +108,11 @@ class Fmw {
     });
 
     document.body.addEventListener('click', (e) => {
-      if(typeof e.target.className.baseVal !== 'undefined' && e.target.className.baseVal.indexOf('keyword-list-close-btn') === 0) {
-        const removeKeywordIdx = e.target.className.baseVal.split('list-close-idx-')[1];
-        this.keywords.splice(removeKeywordIdx, 1);
-        this.searchExecute(true);
+      if(typeof e.target.className.baseVal !== 'undefined' 
+        && e.target.className.baseVal.indexOf('keyword-list-close-btn') === 0) {
+          const removeKeywordIdx = e.target.className.baseVal.split('list-close-idx-')[1];
+          this.keywords.splice(removeKeywordIdx, 1);
+          this.searchExecute(true);
       }
     }, {
       capture: true
