@@ -27,6 +27,8 @@ export default class FindMultipleWords {
       const reg = new RegExp(word, 'gim');
       if(reg.test(nodeText)) {
         nodeText = nodeText.replace(reg, `<i class="fmw-style fmw-style-${i}">\$&</i>`);
+        // 검색된 키워드 카운팅
+        this.wordCount[i] += 1;
       }
     });
 
@@ -59,10 +61,17 @@ export default class FindMultipleWords {
     }
   }
 
+  resetWordCount() {
+    this.wordCount = [];
+  }
+
   searchDomElement(keywords) {
     this.deleteFmwElement(this.body);
     if(keywords.length) {
+      // 검색에 사용된 단어
       this.findWords = keywords;
+      // 검색된 단어의 개수 파악
+      this.wordCount = Array(keywords.length).fill(0);
       this.body.childNodes.forEach(node => this.insertFmwElement(node));
     }
   }

@@ -3,3 +3,9 @@ whale.commands.onCommand.addListener((command) => {
     whale.sidebarAction.show();
   }
 });
+
+whale.runtime.onMessage.addListener((message, sender, sendResponse) => {
+	if(message) {
+		whale.tabs.sendMessage(sender.tab.id, message);
+	}
+});

@@ -94,6 +94,11 @@ class Fmw {
         this.input.focus();
       }
     });
+    
+    // 키워드 검색 후 키워드 개수 출력
+    whale.runtime.onMessage.addListener((message) => {
+      this.keywordList.appendKeywordCount(message);
+    });
   }
 
   eventListener() {
@@ -128,7 +133,9 @@ class Fmw {
 
     whale.tabs.executeScript({
       code: `
+        window.fmwClass.resetWordCount();
         window.fmwClass.searchDomElement(${JSON.stringify(this.keywords)});
+        whale.runtime.sendMessage(fmwClass.wordCount);
       `
     });
 
