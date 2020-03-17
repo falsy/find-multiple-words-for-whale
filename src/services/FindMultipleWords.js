@@ -1,7 +1,9 @@
 export default class FindMultipleWords {
   constructor() {
     this.body = document.body;
-    this.except = ['SCRIPT', 'LINK', 'STYLE', 'IFRAME', 'MAT-ICON'];
+    this.color = ['#AEDFDB', '#F4D94E', '#F38D9B', '#BEA6F9', '#99d45D'];
+    this.except = ['SCRIPT', 'LINK', 'STYLE', 'MAT-ICON'];
+    this.isDeepSearch = false;
   }
 
   insertFmwElement(el) {
@@ -10,6 +12,10 @@ export default class FindMultipleWords {
         && this.except.indexOf(node.parentNode.nodeName) === -1
         && node.data.replace(/\t|\n| /gm, '') !== "") {
           this.replaceElement(node);
+      } else if(this.isDeepSearch && node.nodeName === 'IFRAME') {
+        node.contentDocument.body.childNodes.forEach(node => {
+          this.insertFmwElement(node);
+        });
       } else if(node.childNodes
         && node.childNodes.length
         && this.except.indexOf(node.nodeName) === -1) {
@@ -21,12 +27,20 @@ export default class FindMultipleWords {
   replaceElement(node) {
     const fmwElement = document.createElement('i');
           fmwElement.className = 'fmw-style-container';
+          fmwElement.style.fontStyle = 'normal';
     let nodeText = node.data;
 
     this.findWords.forEach((word, i) => {
       const reg = new RegExp(word, 'gim');
       if(reg.test(nodeText)) {
-        nodeText = nodeText.replace(reg, `<i class="fmw-style fmw-style-${i}">\$&</i>`);
+        const className = `fmw-style fmw-style-${i}`;
+        const baseStyleText = "font-style: normal; display: inline-block; box-shadow: 1px 3px 3px rgba(0,0,0,0.2); border-radius: 4px; padding: 0 5px; color: #000;";
+        const divisionColor = `background: ${this.color[i]};`;
+        nodeText = nodeText.replace(reg, `
+          <i class="${className}" style="${baseStyleText + divisionColor}">
+            \$&
+          </i>
+        `);
         // 검색된 키워드 카운팅
         this.wordCount[i] += 1;
       }
@@ -51,6 +65,9 @@ export default class FindMultipleWords {
     let children = el.children;
     let i = children.length - 1;
     while(i >= 0) {
+      if(children[i].nodeName === 'IFRAME') {
+        this.deleteFmwElement(children[i].contentDocument.body);
+      }
       if(children[i].children && children[i].children.length && this.except.indexOf(children[i].nodeName) === -1) {
         this.deleteFmwElement(children[i]);
       }
@@ -65,7 +82,8 @@ export default class FindMultipleWords {
     this.wordCount = [];
   }
 
-  searchDomElement(keywords) {
+  searchDomElement(keywords, isDeepSearch) {
+    this.isDeepSearch = isDeepSearch;
     this.deleteFmwElement(this.body);
     if(keywords.length) {
       // 검색에 사용된 단어

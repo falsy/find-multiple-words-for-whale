@@ -1,4 +1,3 @@
-import { COLOR } from './constants/index.js';
 import FindMultipleWords from './services/FindMultipleWords.js';
 import KeywordElement from './services/KeywordElement.js';
 
@@ -9,9 +8,34 @@ class Fmw {
     this.keywordList = new KeywordElement();
     this.activeTabList = [];
     this.keywords = [];
+    this.deepSearchCheck = false;
 
     this.whaleEventListener();
     this.eventListener();
+    this.deepSearch();
+  }
+
+  deepSearch() {
+    const checkbox = document.getElementById('deep-search-checkbox');
+    const deepSearchCheck = window.localStorage.getItem('deep-search');
+    
+    if(deepSearchCheck === 'true') {
+      checkbox.setAttribute('checked', true);
+      this.deepSearchCheck = true;
+    } else {
+      checkbox.removeAttribute('checked');
+      this.deepSearchCheck = false;
+    }
+
+    checkbox.addEventListener('change', () => {
+      if(checkbox.checked) {
+        window.localStorage.setItem('deep-search', 'true');
+        this.deepSearchCheck = true;
+      } else {
+        window.localStorage.removeItem('deep-search');
+        this.deepSearchCheck = false;
+      }
+    });
   }
 
   checkRedeclared() {
@@ -29,40 +53,7 @@ class Fmw {
   initExecuteCode() {
     // 탭 페이지에 FMW 클래스 초기화
     whale.tabs.executeScript({
-      code: `
-        window.fmwClass = new ${FindMultipleWords}();
-      `
-    });
-    // 탭 페이지에 CSS 추가
-    whale.tabs.insertCSS({
-      code: `
-        .fmw-style-container {
-          font-style: normal;
-        }
-        .fmw-style-container .fmw-style {
-          font-style: normal;
-          display: inline-block;
-          box-shadow: 1px 3px 3px rgba(0,0,0,0.2);
-          border-radius: 4px;
-          padding: 0 5px;
-          color: #000;
-        }
-        .fmw-style-0 {
-          background: ${COLOR[0]};
-        }
-        .fmw-style-1 {
-          background: ${COLOR[1]};
-        }
-        .fmw-style-2 {
-          background: ${COLOR[2]};
-        }
-        .fmw-style-3 {
-          background: ${COLOR[3]};
-        }
-        .fmw-style-4 {
-          background: ${COLOR[4]};
-        }
-      `
+      code: `window.fmwClass = new ${FindMultipleWords}();`
     });
   }
 
@@ -134,7 +125,7 @@ class Fmw {
     whale.tabs.executeScript({
       code: `
         window.fmwClass.resetWordCount();
-        window.fmwClass.searchDomElement(${JSON.stringify(this.keywords)});
+        window.fmwClass.searchDomElement(${JSON.stringify(this.keywords)}, ${this.deepSearchCheck});
         whale.runtime.sendMessage(fmwClass.wordCount);
       `
     });
