@@ -21,7 +21,7 @@ a:hover {
 }
 
 .ps-text {
-  color: #ccc;
+  color: #656565;
   padding-left: 2px;
   margin: 8px 0 0;
 }
@@ -33,7 +33,8 @@ a:hover {
 
 #search-form h2 {
   font-size: 12px;
-  color: #656565;
+  color: #444;
+  margin: 10px 0 15px;
 }
 
 #search-form #search-box {
@@ -66,12 +67,21 @@ a:hover {
   left: 14px;
 }
 
+#deep-search {
+  margin: 15px 0 20px;
+  color: #656565;
+}
+
+#deep-search span {
+  display: inline-block;
+}
+
 #keyword-container h2 {
-  margin-top: 46px;
   padding-top: 40px;
   border-top: 1px solid #eee;
   font-size: 12px;
-  color: #656565;
+  color: #444;
+  margin: 46px 0 15px;
 }
 
 #keyword-container ul {
