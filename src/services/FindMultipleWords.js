@@ -12,7 +12,7 @@ export default class FindMultipleWords {
         && this.except.indexOf(node.parentNode.nodeName) === -1
         && node.data.replace(/\t|\n| /gm, '') !== "") {
           this.replaceElement(node);
-      } else if(this.isDeepSearch && node.nodeName === 'IFRAME') {
+      } else if(this.isDeepSearch && node.nodeName === 'IFRAME' && node.contentDocument) {
         node.contentDocument.body.childNodes.forEach(node => {
           this.insertFmwElement(node);
         });
@@ -65,7 +65,7 @@ export default class FindMultipleWords {
     let children = el.children;
     let i = children.length - 1;
     while(i >= 0) {
-      if(children[i].nodeName === 'IFRAME') {
+      if(children[i].nodeName === 'IFRAME' && children[i].contentDocument) {
         this.deleteFmwElement(children[i].contentDocument.body);
       }
       if(children[i].children && children[i].children.length && this.except.indexOf(children[i].nodeName) === -1) {

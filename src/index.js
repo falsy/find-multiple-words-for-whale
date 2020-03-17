@@ -124,9 +124,11 @@ class Fmw {
 
     whale.tabs.executeScript({
       code: `
-        window.fmwClass.resetWordCount();
-        window.fmwClass.searchDomElement(${JSON.stringify(this.keywords)}, ${this.deepSearchCheck});
-        whale.runtime.sendMessage(fmwClass.wordCount);
+        if(typeof fmwClass !== 'undefined') {
+          window.fmwClass.resetWordCount();
+          window.fmwClass.searchDomElement(${JSON.stringify(this.keywords)}, ${this.deepSearchCheck});
+          whale.runtime.sendMessage(fmwClass.wordCount);
+        }
       `
     });
 
