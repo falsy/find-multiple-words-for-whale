@@ -8,7 +8,10 @@ class Fmw {
     this.keywordList = new KeywordElement();
     this.activeTabList = [];
     this.keywords = [];
+    this.keywordPositionList = [];
     this.deepSearchCheck = false;
+    this.cacheIdx = 0;
+    this.cacheCnt = 0;
 
     this.whaleEventListener();
     this.eventListener();
@@ -86,9 +89,10 @@ class Fmw {
       }
     });
     
-    // 키워드 검색 후 키워드 개수 출력
-    whale.runtime.onMessage.addListener((message) => {
-      this.keywordList.appendKeywordCount(message);
+    // 키워드 검색 후 키워드 개수 출력 및 위치 값 기억
+    whale.runtime.onMessage.addListener((data) => {
+      this.keywordList.appendKeywordCount(data.count);
+      this.keywordPositionList = data.position;
     });
   }
 
@@ -110,6 +114,12 @@ class Fmw {
           this.keywords.splice(removeKeywordIdx, 1);
           this.searchExecute(true);
       }
+
+      if(e.target.className === 'search-positoon-btn') {
+        const idx = e.target.dataset.idx;
+        this.searchPosition(idx);
+      }
+      
     }, {
       capture: true
     });
@@ -127,7 +137,13 @@ class Fmw {
         if(typeof fmwClass !== 'undefined') {
           window.fmwClass.resetWordCount();
           window.fmwClass.searchDomElement(${JSON.stringify(this.keywords)}, ${this.deepSearchCheck});
-          whale.runtime.sendMessage(fmwClass.wordCount);
+          
+          const fmwData = {
+            count: fmwClass.wordCount,
+            position: fmwClass.wordPosition
+          };
+          
+          whale.runtime.sendMessage(fmwData);
         }
       `
     });
@@ -137,6 +153,27 @@ class Fmw {
       this.keywordList.appendKeywordList(this.keywords);
       this.input.value = '';
     }
+  }
+
+  searchPosition(idx) {
+    if(this.cacheIdx !== idx) {
+      this.cacheIdx = idx;
+      this.cacheCnt = 0;
+    }
+
+    const target = this.keywordPositionList[this.cacheIdx];
+    console.log(this.keywordPositionList);
+    if(this.cacheCnt + 1 > target.length) {
+      this.cacheCnt = 0;
+    }
+
+    whale.tabs.executeScript({
+      code: `
+        document.documentElement.scrollTop = ${target[this.cacheCnt]};
+      `
+    });
+
+    this.cacheCnt += 1;
   }
 
 }
