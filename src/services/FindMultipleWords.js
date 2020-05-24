@@ -45,7 +45,9 @@ export default class FindMultipleWords {
         `);
         // 검색된 키워드 카운팅
         this.wordCount[i] += 1;
-        this.wordPosition[i].push(this.elementAbsPositionTop(node.parentElement));
+        const targetPosition = this.elementAbsPositionTop(node.parentElement);
+        const marginScroll = 80;
+        this.wordPosition[i] = this.wordPosition[i].concat(targetPosition - marginScroll);
       }
     });
 
