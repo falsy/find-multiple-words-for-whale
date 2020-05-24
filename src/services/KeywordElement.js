@@ -25,6 +25,14 @@ export default class KeywordElement {
     return svg;
   }
 
+  searchKeywordPosition(i) {
+    const btn = document.createElement('span');
+          btn.classList.add('search-positoon-btn');
+          btn.setAttribute('data-idx', i);
+          btn.appendChild(document.createTextNode('검색'));
+    return btn;
+  }
+
   appendKeywordList(keywords) {
     const listContainer = document.createElement('ul');
     const listTitle = document.createElement('h2');
@@ -36,9 +44,12 @@ export default class KeywordElement {
 
     keywords.forEach((keyword, i) => {
       const list = document.createElement('li');
+            list.classList.add('search-positoon-btn');
+            list.setAttribute('data-idx', i);
       const text = document.createElement('p');
             text.appendChild(document.createTextNode(keyword));
             list.appendChild(text);
+            // list.appendChild(this.searchKeywordPosition(i));
             list.appendChild(this.createCloseSvg(i));
 
       this.listElement.push(list);
@@ -52,7 +63,7 @@ export default class KeywordElement {
   appendKeywordCount(counts) {
     counts.forEach((count, i) => {
       const countElement = document.createElement('span');
-      const keywordCount = document.createTextNode(`(${counts[i]})`);
+      const keywordCount = document.createTextNode(`(${count})`);
             countElement.appendChild(keywordCount);
       
       this.listElement[i].appendChild(countElement);

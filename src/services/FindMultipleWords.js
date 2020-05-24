@@ -4,6 +4,8 @@ export default class FindMultipleWords {
     this.color = ['#AEDFDB', '#F4D94E', '#F38D9B', '#BEA6F9', '#99d45D'];
     this.except = ['SCRIPT', 'LINK', 'STYLE', 'MAT-ICON'];
     this.isDeepSearch = false;
+    this.wordCount = [];
+    this.wordPosition = [];
   }
 
   insertFmwElement(el) {
@@ -43,6 +45,9 @@ export default class FindMultipleWords {
         `);
         // 검색된 키워드 카운팅
         this.wordCount[i] += 1;
+        const targetPosition = this.elementAbsPositionTop(node.parentElement);
+        const marginScroll = 80;
+        this.wordPosition[i] = this.wordPosition[i].concat(targetPosition - marginScroll);
       }
     });
 
@@ -82,6 +87,10 @@ export default class FindMultipleWords {
     this.wordCount = [];
   }
 
+  resetWordPosition() {
+    this.wordPosition = [];
+  }
+
   searchDomElement(keywords, isDeepSearch) {
     this.isDeepSearch = isDeepSearch;
     this.deleteFmwElement(this.body);
@@ -90,6 +99,8 @@ export default class FindMultipleWords {
       this.findWords = keywords;
       // 검색된 단어의 개수 파악
       this.wordCount = Array(keywords.length).fill(0);
+      // 검색된 단어의 위치값 파악
+      this.wordPosition = Array(keywords.length).fill([]);
       this.body.childNodes.forEach(node => this.insertFmwElement(node));
     }
   }
