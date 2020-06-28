@@ -90,9 +90,15 @@ class FindMultipleWords {
     this.wordPosition = [];
   }
 
+  watchingDom() {
+    console.log('aa');
+  //   console.log(sha1);
+  }
+
   searchDomElement(keywords) {
     this.deleteFmwElement(this.body);
     if(keywords.length) {
+      this.watchingDom();
       // 검색에 사용된 단어
       this.findWords = keywords;
       // 검색된 단어의 개수 파악

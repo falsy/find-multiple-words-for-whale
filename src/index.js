@@ -1,6 +1,5 @@
-import FindMultipleWords from './services/FindMultipleWords';
-import KeywordElement from './services/KeywordElement';
-import './styles/main.scss';
+import FindMultipleWords from './services/FindMultipleWords.js';
+import KeywordElement from './services/KeywordElement.js';
 
 class Fmw {
 
