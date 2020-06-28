@@ -49,7 +49,6 @@ export default class KeywordElement {
       const text = document.createElement('p');
             text.appendChild(document.createTextNode(keyword));
             list.appendChild(text);
-            // list.appendChild(this.searchKeywordPosition(i));
             list.appendChild(this.createCloseSvg(i));
 
       this.listElement.push(list);

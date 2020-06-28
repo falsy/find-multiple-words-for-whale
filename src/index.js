@@ -9,36 +9,13 @@ class Fmw {
     this.activeTabList = [];
     this.keywords = [];
     this.keywordPositionList = [];
-    this.deepSearchCheck = false;
     this.cacheIdx = 0;
     this.cacheCnt = 0;
 
     this.whaleEventListener();
     this.eventListener();
-    this.deepSearch();
-  }
 
-  deepSearch() {
-    const checkbox = document.getElementById('deep-search-checkbox');
-    const deepSearchCheck = window.localStorage.getItem('deep-search');
-    
-    if(deepSearchCheck === 'true') {
-      checkbox.setAttribute('checked', true);
-      this.deepSearchCheck = true;
-    } else {
-      checkbox.removeAttribute('checked');
-      this.deepSearchCheck = false;
-    }
-
-    checkbox.addEventListener('change', () => {
-      if(checkbox.checked) {
-        window.localStorage.setItem('deep-search', 'true');
-        this.deepSearchCheck = true;
-      } else {
-        window.localStorage.removeItem('deep-search');
-        this.deepSearchCheck = false;
-      }
-    });
+    window.localStorage.removeItem('deep-search');
   }
 
   checkRedeclared() {
@@ -136,7 +113,7 @@ class Fmw {
       code: `
         if(typeof fmwClass !== 'undefined') {
           window.fmwClass.resetWordCount();
-          window.fmwClass.searchDomElement(${JSON.stringify(this.keywords)}, ${this.deepSearchCheck});
+          window.fmwClass.searchDomElement(${JSON.stringify(this.keywords)});
           
           const fmwData = {
             count: fmwClass.wordCount,

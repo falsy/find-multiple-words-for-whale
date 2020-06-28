@@ -3,7 +3,6 @@ export default class FindMultipleWords {
     this.body = document.body;
     this.color = ['#AEDFDB', '#F4D94E', '#F38D9B', '#BEA6F9', '#99d45D'];
     this.except = ['SCRIPT', 'LINK', 'STYLE', 'MAT-ICON'];
-    this.isDeepSearch = false;
     this.wordCount = [];
     this.wordPosition = [];
   }
@@ -14,7 +13,7 @@ export default class FindMultipleWords {
         && this.except.indexOf(node.parentNode.nodeName) === -1
         && node.data.replace(/\t|\n| /gm, '') !== "") {
           this.replaceElement(node);
-      } else if(this.isDeepSearch && node.nodeName === 'IFRAME' && node.contentDocument) {
+      } else if(node.nodeName === 'IFRAME' && node.contentDocument) {
         node.contentDocument.body.childNodes.forEach(node => {
           this.insertFmwElement(node);
         });
@@ -91,8 +90,7 @@ export default class FindMultipleWords {
     this.wordPosition = [];
   }
 
-  searchDomElement(keywords, isDeepSearch) {
-    this.isDeepSearch = isDeepSearch;
+  searchDomElement(keywords) {
     this.deleteFmwElement(this.body);
     if(keywords.length) {
       // 검색에 사용된 단어
