@@ -1,5 +1,6 @@
 import FindMultipleWords from './services/FindMultipleWords.js';
 import KeywordElement from './services/KeywordElement.js';
+import sha1 from './libs/sha1.js';
 
 class Fmw {
 
@@ -112,15 +113,40 @@ class Fmw {
     whale.tabs.executeScript({
       code: `
         if(typeof fmwClass !== 'undefined') {
-          window.fmwClass.resetWordCount();
-          window.fmwClass.searchDomElement(${JSON.stringify(this.keywords)});
-          
-          const fmwData = {
-            count: fmwClass.wordCount,
-            position: fmwClass.wordPosition
-          };
-          
-          whale.runtime.sendMessage(fmwData);
+          if(String(${JSON.stringify(this.keywords)})) {
+            const sha1 = ${sha1};
+            let cacheDomHash = '';
+            let newDomHash = '';
+
+            const test = () => {
+              newDomHash = sha1(window.document.body.innerHTML);
+              console.log('new: '+newDomHash);
+              console.log('che: '+cacheDomHash);
+              if(cacheDomHash !== newDomHash || cacheDomHash === '') {
+                window.fmwClass.resetWordCount();
+                window.fmwClass.searchDomElement(${JSON.stringify(this.keywords)});
+
+                setTimeout(() => {
+                  if(cacheDomHash === '') cacheDomHash = sha1(window.document.body.innerHTML);
+                  newDomHash = sha1(window.document.body.innerHTML);
+
+                  const fmwData = {
+                    count: fmwClass.wordCount,
+                    position: fmwClass.wordPosition
+                  };
+
+                  console.log(${JSON.stringify(this.keywords)});
+                  console.log('aa');
+                  whale.runtime.sendMessage(fmwData);
+                }, 300);
+              }
+            };
+
+            window.fmwWatch = setInterval(test, 300);
+          } else {
+            window.fmwClass.resetWordCount();
+            clearInterval(window.fmwWatch)
+          }
         }
       `
     });
@@ -139,7 +165,7 @@ class Fmw {
     }
 
     const target = this.keywordPositionList[this.cacheIdx];
-    console.log(this.keywordPositionList);
+    
     if(this.cacheCnt + 1 > target.length) {
       this.cacheCnt = 0;
     }
