@@ -1,4 +1,4 @@
-export default class KeywordElement {
+class KeywordElement {
 
   constructor() {
     this.container = document.getElementById('keyword-container');
@@ -69,3 +69,5 @@ export default class KeywordElement {
     });
   }
 }
+
+export default KeywordElement;
