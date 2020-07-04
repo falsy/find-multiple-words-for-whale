@@ -5,6 +5,8 @@ class FindMultipleWords {
     this.except = ['SCRIPT', 'LINK', 'STYLE', 'MAT-ICON'];
     this.wordCount = [];
     this.wordPosition = [];
+    this.observer = '';
+    this.lazySearch = '';
   }
 
   insertFmwElement(el) {
@@ -35,13 +37,9 @@ class FindMultipleWords {
       const reg = new RegExp(word, 'gim');
       if(reg.test(nodeText)) {
         const className = `fmw-style fmw-style-${i}`;
-        const baseStyleText = "font-style: normal; display: inline-block; box-shadow: 1px 3px 3px rgba(0,0,0,0.2); border-radius: 4px; padding: 0 5px; color: #000;";
+        const baseStyleText = "font-style: normal; display: inline; box-shadow: 1px 3px 3px rgba(0,0,0,0.2); border-radius: 4px; color: #000; white-space: initial;";
         const divisionColor = `background: ${this.color[i]};`;
-        nodeText = nodeText.replace(reg, `
-          <i class="${className}" style="${baseStyleText + divisionColor}">
-            \$&
-          </i>
-        `);
+        nodeText = nodeText.replace(reg, `<i class="${className}" style="${baseStyleText + divisionColor}">\$&</i>`);
         // 검색된 키워드 카운팅
         this.wordCount[i] += 1;
         const targetPosition = this.elementAbsPositionTop(node.parentElement);
@@ -66,7 +64,7 @@ class FindMultipleWords {
   }
 
   deleteFmwElement(el) {
-    let children = el.children;
+    const children = el.children;
     let i = children.length - 1;
     while(i >= 0) {
       if(children[i].nodeName === 'IFRAME' && children[i].contentDocument) {
@@ -82,25 +80,46 @@ class FindMultipleWords {
     }
   }
 
-  resetWordCount() {
-    this.wordCount = [];
-  }
-
   resetWordPosition() {
     this.wordPosition = [];
   }
 
   searchDomElement(keywords) {
+    this.wordCount = [];
     this.deleteFmwElement(this.body);
-    if(keywords.length) {
-      // 검색에 사용된 단어
-      this.findWords = keywords;
-      // 검색된 단어의 개수 파악
-      this.wordCount = Array(keywords.length).fill(0);
-      // 검색된 단어의 위치값 파악
-      this.wordPosition = Array(keywords.length).fill([]);
-      this.body.childNodes.forEach(node => this.insertFmwElement(node));
-    }
+    if(keywords.length === 0) return;
+    // 검색에 사용된 단어
+    this.findWords = keywords;
+    // 검색된 단어의 개수 파악
+    this.wordCount = Array(keywords.length).fill(0);
+    // 검색된 단어의 위치값 파악
+    this.wordPosition = Array(keywords.length).fill([]);
+    this.body.childNodes.forEach(node => this.insertFmwElement(node));
+
+    this.startDomObserver(keywords);
+  }
+
+  startDomObserver(keywords) {
+    const targetNode = document.body;
+    const config = { 
+      childList: true, 
+      subtree: true,
+      attributes: false,
+      characterData: true,
+      attributeOldValue: false,
+      characterDataOldValue: false
+    };
+
+    if(this.observer) this.observer.disconnect();
+    this.observer = new MutationObserver(() => {
+      if(this.lazySearch) clearTimeout(this.lazySearch);
+      this.lazySearch = setTimeout(() => {
+        this.observer.disconnect();
+        this.searchDomElement(keywords);
+      }, 1000);
+      console.log('a');
+    });
+    this.observer.observe(targetNode, config);
   }
 
 }
