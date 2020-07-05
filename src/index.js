@@ -1,5 +1,6 @@
 import FindMultipleWords from './services/FindMultipleWords.js';
 import KeywordElement from './services/KeywordElement.js';
+// import sha1 from './libs/sha1.js';
 
 class Fmw {
 
@@ -9,36 +10,13 @@ class Fmw {
     this.activeTabList = [];
     this.keywords = [];
     this.keywordPositionList = [];
-    this.deepSearchCheck = false;
     this.cacheIdx = 0;
     this.cacheCnt = 0;
 
     this.whaleEventListener();
     this.eventListener();
-    this.deepSearch();
-  }
 
-  deepSearch() {
-    const checkbox = document.getElementById('deep-search-checkbox');
-    const deepSearchCheck = window.localStorage.getItem('deep-search');
-    
-    if(deepSearchCheck === 'true') {
-      checkbox.setAttribute('checked', true);
-      this.deepSearchCheck = true;
-    } else {
-      checkbox.removeAttribute('checked');
-      this.deepSearchCheck = false;
-    }
-
-    checkbox.addEventListener('change', () => {
-      if(checkbox.checked) {
-        window.localStorage.setItem('deep-search', 'true');
-        this.deepSearchCheck = true;
-      } else {
-        window.localStorage.removeItem('deep-search');
-        this.deepSearchCheck = false;
-      }
-    });
+    window.localStorage.removeItem('deep-search');
   }
 
   checkRedeclared() {
@@ -135,15 +113,7 @@ class Fmw {
     whale.tabs.executeScript({
       code: `
         if(typeof fmwClass !== 'undefined') {
-          window.fmwClass.resetWordCount();
-          window.fmwClass.searchDomElement(${JSON.stringify(this.keywords)}, ${this.deepSearchCheck});
-          
-          const fmwData = {
-            count: fmwClass.wordCount,
-            position: fmwClass.wordPosition
-          };
-          
-          whale.runtime.sendMessage(fmwData);
+          window.fmwClass.searchDomElement(${JSON.stringify(this.keywords)});
         }
       `
     });
@@ -162,15 +132,13 @@ class Fmw {
     }
 
     const target = this.keywordPositionList[this.cacheIdx];
-    console.log(this.keywordPositionList);
+    
     if(this.cacheCnt + 1 > target.length) {
       this.cacheCnt = 0;
     }
 
     whale.tabs.executeScript({
-      code: `
-        document.documentElement.scrollTop = ${target[this.cacheCnt]};
-      `
+      code: `document.documentElement.scrollTop = ${target[this.cacheCnt]};`
     });
 
     this.cacheCnt += 1;

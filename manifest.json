@@ -1,16 +1,16 @@
 {
   "manifest_version": 2,
   "name": "여러 단어 찾기",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "description": "문서에서 여러 단어를 찾습니다.",
   "icons": {
-    "32": "src/imgs/fmw-icon-32.png",
-    "128": "src/imgs/fmw-icon-128-v3.png"
+    "32": "./src/imgs/fmw-icon-32.png",
+    "128": "./src/imgs/fmw-icon-128-v3.png"
   },
   "sidebar_action": {
-    "default_page": "index.html",
+    "default_page": "./src/index.html",
     "default_icon": {
-      "32": "src/imgs/fmw-icon-32.png"
+      "32": "./src/imgs/fmw-icon-32.png"
     },
     "default_title": "단어 찾기",
     "use_navigation_bar": false

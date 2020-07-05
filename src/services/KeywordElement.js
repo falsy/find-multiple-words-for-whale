@@ -1,4 +1,4 @@
-export default class KeywordElement {
+class KeywordElement {
 
   constructor() {
     this.container = document.getElementById('keyword-container');
@@ -49,7 +49,6 @@ export default class KeywordElement {
       const text = document.createElement('p');
             text.appendChild(document.createTextNode(keyword));
             list.appendChild(text);
-            // list.appendChild(this.searchKeywordPosition(i));
             list.appendChild(this.createCloseSvg(i));
 
       this.listElement.push(list);
@@ -62,7 +61,13 @@ export default class KeywordElement {
   // 검색한 키워드의 개수 출력
   appendKeywordCount(counts) {
     counts.forEach((count, i) => {
+      const countEl = document.getElementsByClassName('keyword-count');
+      for(const count of countEl) {
+        this.listElement[i].removeChild(count);
+      }
+
       const countElement = document.createElement('span');
+            countElement.classList.add('keyword-count');
       const keywordCount = document.createTextNode(`(${count})`);
             countElement.appendChild(keywordCount);
 
@@ -70,3 +75,5 @@ export default class KeywordElement {
     });
   }
 }
+
+export default KeywordElement;
