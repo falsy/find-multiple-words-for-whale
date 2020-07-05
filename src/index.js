@@ -69,6 +69,7 @@ class Fmw {
     
     // 키워드 검색 후 키워드 개수 출력 및 위치 값 기억
     whale.runtime.onMessage.addListener((data) => {
+      console.log(data);
       this.keywordList.appendKeywordCount(data.count);
       this.keywordPositionList = data.position;
     });
@@ -113,15 +114,15 @@ class Fmw {
     whale.tabs.executeScript({
       code: `
         if(typeof fmwClass !== 'undefined') {
-          // window.fmwClass.resetWordCount();
           window.fmwClass.searchDomElement(${JSON.stringify(this.keywords)});
-          // window.fmwClass.startDomObserver(${JSON.stringify(this.keywords)});
         }
       `
     });
 
     this.keywordList.removeKeywordList();
     if(this.keywords.length) {
+      console.log(this.keywords);
+      console.log(this.keywordList);
       this.keywordList.appendKeywordList(this.keywords);
       this.input.value = '';
     }
@@ -140,9 +141,7 @@ class Fmw {
     }
 
     whale.tabs.executeScript({
-      code: `
-        document.documentElement.scrollTop = ${target[this.cacheCnt]};
-      `
+      code: `document.documentElement.scrollTop = ${target[this.cacheCnt]};`
     });
 
     this.cacheCnt += 1;

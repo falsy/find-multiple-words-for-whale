@@ -109,15 +109,15 @@ class FindMultipleWords {
       attributeOldValue: false,
       characterDataOldValue: false
     };
-
+    
     if(this.observer) this.observer.disconnect();
+    if(this.lazySearch) clearTimeout(this.lazySearch);
     this.observer = new MutationObserver(() => {
       if(this.lazySearch) clearTimeout(this.lazySearch);
       this.lazySearch = setTimeout(() => {
         this.observer.disconnect();
         this.searchDomElement(keywords);
       }, 1000);
-      console.log('a');
     });
     this.observer.observe(targetNode, config);
   }
