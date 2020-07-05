@@ -87,7 +87,10 @@ class FindMultipleWords {
   searchDomElement(keywords) {
     this.wordCount = [];
     this.deleteFmwElement(this.body);
+    if(this.observer) this.observer.disconnect();
+    if(this.lazySearch) clearTimeout(this.lazySearch);
     if(keywords.length === 0) return;
+    
     // 검색에 사용된 단어
     this.findWords = keywords;
     // 검색된 단어의 개수 파악
@@ -95,6 +98,11 @@ class FindMultipleWords {
     // 검색된 단어의 위치값 파악
     this.wordPosition = Array(keywords.length).fill([]);
     this.body.childNodes.forEach(node => this.insertFmwElement(node));
+
+    whale.runtime.sendMessage({
+      count: this.wordCount,
+      position: this.wordPosition
+    });
 
     this.startDomObserver(keywords);
   }
@@ -110,8 +118,6 @@ class FindMultipleWords {
       characterDataOldValue: false
     };
     
-    if(this.observer) this.observer.disconnect();
-    if(this.lazySearch) clearTimeout(this.lazySearch);
     this.observer = new MutationObserver(() => {
       if(this.lazySearch) clearTimeout(this.lazySearch);
       this.lazySearch = setTimeout(() => {

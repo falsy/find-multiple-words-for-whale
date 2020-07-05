@@ -69,7 +69,6 @@ class Fmw {
     
     // 키워드 검색 후 키워드 개수 출력 및 위치 값 기억
     whale.runtime.onMessage.addListener((data) => {
-      console.log(data);
       this.keywordList.appendKeywordCount(data.count);
       this.keywordPositionList = data.position;
     });
@@ -121,8 +120,6 @@ class Fmw {
 
     this.keywordList.removeKeywordList();
     if(this.keywords.length) {
-      console.log(this.keywords);
-      console.log(this.keywordList);
       this.keywordList.appendKeywordList(this.keywords);
       this.input.value = '';
     }

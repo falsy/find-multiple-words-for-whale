@@ -61,7 +61,13 @@ class KeywordElement {
   // 검색한 키워드의 개수 출력
   appendKeywordCount(counts) {
     counts.forEach((count, i) => {
+      const countEl = document.getElementsByClassName('keyword-count');
+      for(const count of countEl) {
+        this.listElement[i].removeChild(count);
+      }
+
       const countElement = document.createElement('span');
+            countElement.classList.add('keyword-count');
       const keywordCount = document.createTextNode(`(${count})`);
             countElement.appendChild(keywordCount);
       
