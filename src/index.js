@@ -1,6 +1,5 @@
 import FindMultipleWords from './services/FindMultipleWords.js';
 import KeywordElement from './services/KeywordElement.js';
-// import sha1 from './libs/sha1.js';
 
 class Fmw {
 
