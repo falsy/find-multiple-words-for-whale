@@ -39,6 +39,7 @@ a:hover {
 
 #search-form #search-box {
   position: relative;
+  margin-bottom: 20px;
 }
 
 #search-box input {

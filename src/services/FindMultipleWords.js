@@ -1,11 +1,12 @@
-export default class FindMultipleWords {
+class FindMultipleWords {
   constructor() {
     this.body = document.body;
     this.color = ['#AEDFDB', '#F4D94E', '#F38D9B', '#BEA6F9', '#99d45D'];
     this.except = ['SCRIPT', 'LINK', 'STYLE', 'MAT-ICON'];
-    this.isDeepSearch = false;
     this.wordCount = [];
     this.wordPosition = [];
+    this.observer = '';
+    this.lazySearch = '';
   }
 
   insertFmwElement(el) {
@@ -14,7 +15,7 @@ export default class FindMultipleWords {
         && this.except.indexOf(node.parentNode.nodeName) === -1
         && node.data.replace(/\t|\n| /gm, '') !== "") {
           this.replaceElement(node);
-      } else if(this.isDeepSearch && node.nodeName === 'IFRAME' && node.contentDocument) {
+      } else if(node.nodeName === 'IFRAME' && node.contentDocument) {
         node.contentDocument.body.childNodes.forEach(node => {
           this.insertFmwElement(node);
         });
@@ -36,13 +37,9 @@ export default class FindMultipleWords {
       const reg = new RegExp(word, 'gim');
       if(reg.test(nodeText)) {
         const className = `fmw-style fmw-style-${i}`;
-        const baseStyleText = "font-style: normal; display: inline-block; box-shadow: 1px 3px 3px rgba(0,0,0,0.2); border-radius: 4px; padding: 0 5px; color: #000;";
+        const baseStyleText = "font-style: normal; display: inline; box-shadow: 1px 3px 3px rgba(0,0,0,0.2); border-radius: 4px; color: #000; white-space: initial;";
         const divisionColor = `background: ${this.color[i]};`;
-        nodeText = nodeText.replace(reg, `
-          <i class="${className}" style="${baseStyleText + divisionColor}">
-            \$&
-          </i>
-        `);
+        nodeText = nodeText.replace(reg, `<i class="${className}" style="${baseStyleText + divisionColor}">\$&</i>`);
         // 검색된 키워드 카운팅
         this.wordCount[i] += 1;
         const targetPosition = this.elementAbsPositionTop(node.parentElement);
@@ -67,7 +64,7 @@ export default class FindMultipleWords {
   }
 
   deleteFmwElement(el) {
-    let children = el.children;
+    const children = el.children;
     let i = children.length - 1;
     while(i >= 0) {
       if(children[i].nodeName === 'IFRAME' && children[i].contentDocument) {
@@ -83,26 +80,54 @@ export default class FindMultipleWords {
     }
   }
 
-  resetWordCount() {
-    this.wordCount = [];
-  }
-
   resetWordPosition() {
     this.wordPosition = [];
   }
 
-  searchDomElement(keywords, isDeepSearch) {
-    this.isDeepSearch = isDeepSearch;
+  searchDomElement(keywords) {
+    this.wordCount = [];
     this.deleteFmwElement(this.body);
-    if(keywords.length) {
-      // 검색에 사용된 단어
-      this.findWords = keywords;
-      // 검색된 단어의 개수 파악
-      this.wordCount = Array(keywords.length).fill(0);
-      // 검색된 단어의 위치값 파악
-      this.wordPosition = Array(keywords.length).fill([]);
-      this.body.childNodes.forEach(node => this.insertFmwElement(node));
-    }
+    if(this.observer) this.observer.disconnect();
+    if(this.lazySearch) clearTimeout(this.lazySearch);
+    if(keywords.length === 0) return;
+    
+    // 검색에 사용된 단어
+    this.findWords = keywords;
+    // 검색된 단어의 개수 파악
+    this.wordCount = Array(keywords.length).fill(0);
+    // 검색된 단어의 위치값 파악
+    this.wordPosition = Array(keywords.length).fill([]);
+    this.body.childNodes.forEach(node => this.insertFmwElement(node));
+
+    whale.runtime.sendMessage({
+      count: this.wordCount,
+      position: this.wordPosition
+    });
+
+    this.startDomObserver(keywords);
+  }
+
+  startDomObserver(keywords) {
+    const targetNode = document.body;
+    const config = { 
+      childList: true, 
+      subtree: true,
+      attributes: false,
+      characterData: true,
+      attributeOldValue: false,
+      characterDataOldValue: false
+    };
+    
+    this.observer = new MutationObserver(() => {
+      if(this.lazySearch) clearTimeout(this.lazySearch);
+      this.lazySearch = setTimeout(() => {
+        this.observer.disconnect();
+        this.searchDomElement(keywords);
+      }, 1000);
+    });
+    this.observer.observe(targetNode, config);
   }
 
 }
+
+export default FindMultipleWords;
