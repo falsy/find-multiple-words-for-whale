@@ -65,7 +65,7 @@ export default class KeywordElement {
       const countElement = document.createElement('span');
       const keywordCount = document.createTextNode(`(${count})`);
             countElement.appendChild(keywordCount);
-      
+
       this.listElement[i].appendChild(countElement);
     });
   }
