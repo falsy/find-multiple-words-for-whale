@@ -27,7 +27,7 @@ class KeywordElement {
 
   searchKeywordPosition(i) {
     const btn = document.createElement('span');
-          btn.classList.add('search-positoon-btn');
+          btn.classList.add('search-position-btn');
           btn.setAttribute('data-idx', i);
           btn.appendChild(document.createTextNode('검색'));
     return btn;
@@ -44,7 +44,7 @@ class KeywordElement {
 
     keywords.forEach((keyword, i) => {
       const list = document.createElement('li');
-            list.classList.add('search-positoon-btn');
+            list.classList.add('search-position-btn');
             list.setAttribute('data-idx', i);
       const text = document.createElement('p');
             text.appendChild(document.createTextNode(keyword));
@@ -60,8 +60,9 @@ class KeywordElement {
 
   // 검색한 키워드의 개수 출력
   appendKeywordCount(counts) {
-    
-    const countContainerEL = document.getElementsByClassName('search-positoon-btn');
+    if(typeof this.listElement === 'undefined') return;
+
+    const countContainerEL = document.getElementsByClassName('search-position-btn');
     const countItemEl = document.getElementsByClassName('keyword-count');
 
     for(const countCont of countContainerEL) {
