@@ -85,7 +85,8 @@ class FindMultipleWords {
   }
 
   clearTimeoutSearch() {
-    clearTimeout(this.lazySearch);
+    if(this.observer) this.observer.disconnect();
+    if(this.lazySearch) clearTimeout(this.lazySearch);
   }
 
   searchDomElement(keywords) {

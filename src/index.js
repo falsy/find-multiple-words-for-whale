@@ -40,7 +40,10 @@ class Fmw {
   initExecuteCode() {
     // 탭 페이지에 FMW 클래스 초기화
     whale.tabs.executeScript({
-      code: `window.fmwClass = new ${FindMultipleWords}();`
+      code: `
+        if(typeof fmwClass === 'undefined') {
+          window.fmwClass = new ${FindMultipleWords}();
+        }`
     });
   }
 
@@ -50,12 +53,19 @@ class Fmw {
     }
   }
 
+  clearEeventMessage() {
+    whale.tabs.executeScript({
+      code: `window.fmwClass.clearTimeoutSearch();`
+    });
+  }
+
   whaleEventListener() {
     // 탭이 업데이트 되었을때, 다시 문서에서 단어를 검색하도록
     whale.tabs.onUpdated.addListener((id, changeInfo) => {
       if(changeInfo.status === 'complete') {
         this.initExecuteCode();
         this.setStorageKeywords();
+        this.clearEeventMessage();
         this.searchExecute(this.keywords.length>0);
       }
     });
@@ -85,11 +95,7 @@ class Fmw {
     // 키워드 검색 후 키워드 개수 출력 및 위치 값 기억
     whale.runtime.onMessage.addListener((data) => {
       const stringMessage = JSON.stringify(data);
-      if(cacheMessage === stringMessage) {
-        whale.tabs.executeScript({
-          code: `window.fmwClass.clearTimeoutSearch();`
-        });
-      }
+      if(cacheMessage === stringMessage) this.clearEeventMessage();
       cacheMessage = stringMessage;
       this.keywordList.appendKeywordCount(data.count);
       this.keywordPositionList = data.position;
