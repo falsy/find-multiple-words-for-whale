@@ -84,6 +84,11 @@ class FindMultipleWords {
     this.wordPosition = [];
   }
 
+  clearTimeoutSearch() {
+    if(this.observer) this.observer.disconnect();
+    if(this.lazySearch) clearTimeout(this.lazySearch);
+  }
+
   searchDomElement(keywords) {
     this.wordCount = [];
     this.deleteFmwElement(this.body);

@@ -1,13 +1,17 @@
 import FindMultipleWords from './services/FindMultipleWords.js';
 import KeywordElement from './services/KeywordElement.js';
+import WebStorage from './services/WebStorage.js';
 
 class Fmw {
 
   constructor() {
-    this.input = document.getElementById('keyword');
     this.keywordList = new KeywordElement();
+    this.storage = new WebStorage();
+    if(this.storage.getkeywords() === null) this.storage.setKeywords([]);
+
+    this.input = document.getElementById('keyword');
+    this.keywords = this.storage.getkeywords();
     this.activeTabList = [];
-    this.keywords = [];
     this.keywordPositionList = [];
     this.cacheIdx = 0;
     this.cacheCnt = 0;
@@ -15,7 +19,10 @@ class Fmw {
     this.whaleEventListener();
     this.eventListener();
 
-    window.localStorage.removeItem('deep-search');
+    if(this.keywords.length) {
+      this.initExecuteCode();
+      this.searchExecute(true);
+    }
   }
 
   checkRedeclared() {
@@ -33,7 +40,22 @@ class Fmw {
   initExecuteCode() {
     // 탭 페이지에 FMW 클래스 초기화
     whale.tabs.executeScript({
-      code: `window.fmwClass = new ${FindMultipleWords}();`
+      code: `
+        if(typeof fmwClass === 'undefined') {
+          window.fmwClass = new ${FindMultipleWords}();
+        }`
+    });
+  }
+
+  setStorageKeywords() {
+    if(this.keywords.length === 0 && this.storage.getkeywords().length > 0) {
+      this.keywords = this.storage.getkeywords();
+    }
+  }
+
+  clearEeventMessage() {
+    whale.tabs.executeScript({
+      code: `window.fmwClass.clearTimeoutSearch();`
     });
   }
 
@@ -42,6 +64,8 @@ class Fmw {
     whale.tabs.onUpdated.addListener((id, changeInfo) => {
       if(changeInfo.status === 'complete') {
         this.initExecuteCode();
+        this.setStorageKeywords();
+        this.clearEeventMessage();
         this.searchExecute(this.keywords.length>0);
       }
     });
@@ -49,6 +73,7 @@ class Fmw {
     // 다른 탭이 활성화 되었을때, 다시 문서에서 단어를 검색하도록
     whale.tabs.onActivated.addListener(() => {
       this.checkRedeclared();
+      this.setStorageKeywords();
       this.searchExecute(this.keywords.length>0);
     });
 
@@ -66,8 +91,12 @@ class Fmw {
       }
     });
     
+    let cacheMessage = '';
     // 키워드 검색 후 키워드 개수 출력 및 위치 값 기억
     whale.runtime.onMessage.addListener((data) => {
+      const stringMessage = JSON.stringify(data);
+      if(cacheMessage === stringMessage) this.clearEeventMessage();
+      cacheMessage = stringMessage;
       this.keywordList.appendKeywordCount(data.count);
       this.keywordPositionList = data.position;
     });
@@ -92,7 +121,7 @@ class Fmw {
           this.searchExecute(true);
       }
 
-      if(e.target.className === 'search-positoon-btn') {
+      if(e.target.className === 'search-position-btn') {
         const idx = e.target.dataset.idx;
         this.searchPosition(idx);
       }
@@ -109,6 +138,8 @@ class Fmw {
       return keyword.trim();
     }).filter(Boolean);
 
+    this.storage.setKeywords(this.keywords);
+
     whale.tabs.executeScript({
       code: `
         if(typeof fmwClass !== 'undefined') {
@@ -117,6 +148,10 @@ class Fmw {
       `
     });
 
+    this.printSearchKeywords();
+  }
+
+  printSearchKeywords() {
     this.keywordList.removeKeywordList();
     if(this.keywords.length) {
       this.keywordList.appendKeywordList(this.keywords);
