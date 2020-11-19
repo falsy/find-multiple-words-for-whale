@@ -1,0 +1,1 @@
+export const KEYWORDS_STORAGE_KEY_NAME = 'keywords'
