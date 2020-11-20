@@ -1,4 +1,4 @@
-import { KEYWORDS_STORAGE_KEY_NAME } from "src/constants"
+import { KEYWORDS_STORAGE_KEY_NAME } from "../../constants"
 import { IWebStorage } from "./interfaces/webStorage"
 
 class WebStorage implements IWebStorage {

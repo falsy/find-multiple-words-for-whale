@@ -1,7 +1,9 @@
-import repositories from "../repositories"
-import infrastructures from "../infrastructures"
+import repositories from "./repositories"
+import infrastructures from "./infrastructures"
+import Controller from './controllers';
 
 const infra = infrastructures()
 const repo = repositories(infra)
 
-export default repo;
+
+export default new Controller(repo);
