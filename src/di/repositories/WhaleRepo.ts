@@ -23,6 +23,10 @@ class WhaleRepo implements IWhaleRepo {
   searchDomElement(keywords: Array<string>): void {
     this.whale.searchDomElement(keywords)
   }
+
+  getCurruntTabId(): Promise<number> {
+    return this.whale.getCurruntTabId()
+  }
   
   clearEventMessage(): void {
     this.whale.clearEventMessage()

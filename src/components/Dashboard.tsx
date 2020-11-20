@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useState, useEffect } from "react"
 
-import Ctrl from '../di'
+import ctrl from '../di'
 
 import Footer from './Footer'
 import Search from './Search'
@@ -9,19 +9,20 @@ import Keyword from './Keyword'
 
 const Dashboard: React.FC = () => {
 
-  const [keywords, setKeywords] = useState(Ctrl.getkeywords())
+  const [keywords, setKeywords] = useState(ctrl.getkeywords())
   const [tabList, setTabList] = useState([])
-  const [keywordPostionList, setKeywordPositionList] = useState([])
+  const [countList, setCountList] = useState([])
+  const [postionList, setPositionList] = useState([])
   const [cacheIdx, setCacheIdx] = useState(0)
   const [cacheCnt, setCacheCnt] = useState(0)
 
   useEffect(() => {
-    Ctrl.searchExecute(keywords)
-    console.log('b');
+    ctrl.searchExecute(keywords)
   }, [keywords])
 
   useEffect(() => {
-    Ctrl.insertClassFmw();
+    ctrl.insertClassFmw()
+    ctrl.addWhaleEventListener(setKeywords, tabList, setTabList, setCountList, setPositionList)
   }, [])
 
   return (

@@ -34,6 +34,14 @@ class Whale implements IWhale {
       `
     });
   }
+
+  getCurruntTabId(): Promise<number> {
+    return new Promise(resolve => {
+      this.whale.windows.getCurrent({ populate: true }, (data) => {
+        resolve(data.tabs.filter((tab) => tab.active)[0]?.id)
+      })
+    })
+  }
   
   clearEventMessage(): void {
     this.whale.tabs.executeScript({

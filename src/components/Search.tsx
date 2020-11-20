@@ -52,13 +52,15 @@ interface IProps {
 }
 
 const Search: React.FC<IProps> = ({ setKeywords }) => {
-  const handleKeyUpKeywords = (e: React.KeyboardEvent<HTMLInputElement>) => {
+
+  const handleKeyPressKeywords = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if(e.key === 'Enter') {
       setKeywords(e.currentTarget.value
         .split(',')
         .slice(0, 5)
         .map((keyword: string) => keyword.trim())
-        .filter(Boolean));
+        .filter(Boolean))
+      e.currentTarget.value = ''
     }
   };
 
@@ -69,7 +71,7 @@ const Search: React.FC<IProps> = ({ setKeywords }) => {
         <S_SearchIcon>
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#e2e4e3"/><path d="M0 0h24v24H0z" fill="none"/></svg>
         </S_SearchIcon>
-        <input type="text" onKeyUp={handleKeyUpKeywords} placeholder="Nice, To, Meet, You" autoComplete="off" autoFocus={true} />
+        <input type="text" onKeyPress={handleKeyPressKeywords} placeholder="Nice, To, Meet, You" autoComplete="off" autoFocus={true} />
       </S_SearchBox>
       <S_PsText>- 쉼표(,)로 구분하여 최대 5개까지의 단어를 찾을 수 있습니다.</S_PsText>
     </S_SearchForm>
