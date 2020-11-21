@@ -1,8 +1,9 @@
 import { IBgeDTO } from "../dto/bgeDTO"
 import { IStorageRepo } from "../repositories/interfaces/storageRepo"
 import { IWhaleRepo } from "../repositories/interfaces/whaleRepo"
+import { IController } from "./interface"
 
-class Controller {
+class Controller implements IController {
 
   constructor(
     private readonly whale: IWhaleRepo,
@@ -52,7 +53,7 @@ class Controller {
     this.whale.initClassFMW()
   }
 
-  searchExecute(keywords: Array<string>) {
+  searchExecute(keywords: Array<string>): void {
     // console.log('a');
     this.storage.setKeywords(keywords)
     this.whale.searchDomElement(keywords)
