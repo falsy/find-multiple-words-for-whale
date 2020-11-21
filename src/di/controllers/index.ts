@@ -1,4 +1,4 @@
-import { IBgeDTO } from "../dto/bgeDTO"
+import { IBgeDTO } from "../dto/BgeDTO"
 import { IStorageRepo } from "../repositories/interfaces/storageRepo"
 import { IWhaleRepo } from "../repositories/interfaces/whaleRepo"
 import { IController } from "./interface"

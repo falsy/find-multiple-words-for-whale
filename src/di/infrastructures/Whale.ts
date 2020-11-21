@@ -1,5 +1,5 @@
 import { IWhale } from "./interfaces/whale"
-import BgeDTO, { IBgeParams } from '../dto/bgeDTO'
+import BgeDTO, { IBgeParams } from '../dto/BgeDTO'
 
 class Whale implements IWhale {
   

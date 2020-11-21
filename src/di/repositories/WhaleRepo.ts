@@ -1,6 +1,6 @@
 import { EXCEPT_NODE_NAME, KEYWORDS_COLOR_SET } from "../../constants"
 import FindMultipleWords from "../data/FindMultipleWords"
-import { IBgeDTO } from "../dto/bgeDTO";
+import { IBgeDTO } from "../dto/BgeDTO";
 import { IWhale } from "../infrastructures/interfaces/whale"
 import { IWhaleRepo } from "./interfaces/whaleRepo"
 
