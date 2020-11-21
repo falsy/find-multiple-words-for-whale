@@ -54,7 +54,6 @@ class Controller implements IController {
   }
 
   searchExecute(keywords: Array<string>): void {
-    // console.log('a');
     this.storage.setKeywords(keywords)
     this.whale.searchDomElement(keywords)
   }
