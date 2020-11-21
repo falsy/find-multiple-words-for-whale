@@ -70,10 +70,13 @@ class FindMultipleWords implements IFindMultipleWords {
 
   private elementAbsPositionTop(el: any): number {
     let posTop = 0
-    while(el.offsetParent) {
+    let target = el.offsetParent
+
+    while(target) {
       posTop += el.offsetTop - el.scrollTop
-      el = el.offsetParent
+      target = el.offsetParent
     }
+    
     return posTop
   }
 
@@ -95,7 +98,7 @@ class FindMultipleWords implements IFindMultipleWords {
 
   private startDomObserver(keywords: Array<string>): void {
     let observeCount = 0
-    
+
     this.observer = new MutationObserver(() => {
       observeCount += 1
       
