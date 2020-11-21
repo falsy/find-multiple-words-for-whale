@@ -17,7 +17,7 @@ class WhaleRepo implements IWhaleRepo {
   initClassFMW(): void {
     this.whale.executeScript(`
       if(typeof fmwClass === 'undefined') {
-        window.fmwClass = new ${FindMultipleWords}(${KEYWORDS_COLOR_SET}, ${EXCEPT_NODE_NAME})
+        window.fmwClass = new ${FindMultipleWords}(${JSON.stringify(KEYWORDS_COLOR_SET)}, ${JSON.stringify(EXCEPT_NODE_NAME)})
       }
     `)
   }
