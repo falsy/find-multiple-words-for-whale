@@ -53,6 +53,7 @@ class Controller {
   }
 
   searchExecute(keywords: Array<string>) {
+    // console.log('a');
     this.storage.setKeywords(keywords)
     this.whale.searchDomElement(keywords)
   }

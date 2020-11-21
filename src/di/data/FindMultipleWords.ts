@@ -56,7 +56,8 @@ class FindMultipleWords implements IFindMultipleWords {
         
         // 검색된 키워드 카운팅
         this.wordCount[i] += 1
-        const targetPosition = this.elementAbsPositionTop(node.parentElement)
+        const targetEl = node.parentElement
+        const targetPosition = window.pageYOffset + targetEl.getBoundingClientRect().top
         const marginScroll = 80
         this.wordPosition[i] = this.wordPosition[i].concat(targetPosition - marginScroll)
       }
@@ -66,18 +67,6 @@ class FindMultipleWords implements IFindMultipleWords {
       fmwElement.innerHTML = nodeText
       node.parentNode.replaceChild(fmwElement, node)
     }
-  }
-
-  private elementAbsPositionTop(el: any): number {
-    let posTop = 0
-    let target = el.offsetParent
-
-    while(target) {
-      posTop += el.offsetTop - el.scrollTop
-      target = el.offsetParent
-    }
-    
-    return posTop
   }
 
   private deleteFmwElement(el: HTMLObjectElement): void {
@@ -125,22 +114,18 @@ class FindMultipleWords implements IFindMultipleWords {
     })
   }
 
-  clearTimeoutSearch(): void {
+  searchDomElement(keywords: Array<string>): void {
     if(this.observer) this.observer.disconnect()
     if(this.lazySearch) clearTimeout(this.lazySearch)
-  }
 
-  searchDomElement(keywords: Array<string>): void {
-    this.clearTimeoutSearch()
-
-    // 기존 검색된 단어 제거
+    // // 기존 검색된 단어 제거
     this.body.childNodes.forEach((node: HTMLObjectElement) => this.deleteFmwElement(node))
     
     this.findWords = keywords
     this.wordCount = Array(keywords.length).fill(0)
     this.wordPosition = Array(keywords.length).fill([])
 
-    // 단어 검색
+    // // 단어 검색
     this.body.childNodes.forEach((node: HTMLObjectElement) => this.insertFmwElement(node))
 
     whale.runtime.sendMessage({
