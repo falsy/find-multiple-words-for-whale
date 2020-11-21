@@ -19,16 +19,16 @@ class FindMultipleWords implements IFindMultipleWords {
     this.wordPosition = []
     this.findWords = []
     this.observer = ''
-    this.lazySearch = ''
+    this.lazySearch = 0
   }
 
-  private insertFmwElement(el: any): void {
-    el.childNodes.forEach((node: any) => {
+  private insertFmwElement(el: HTMLObjectElement): void {
+    el.childNodes.forEach((node: HTMLObjectElement) => {
       if(node.nodeName === '#text'
         && this.except.indexOf(node.parentNode.nodeName) === -1
         && node.data.replace(/\t|\n| /gm, '') !== "") {
           this.replaceElement(node)
-      } else if(node.nodeName === 'IFRAME' && node.contentDocument) {
+      } else if(node.nodeName === 'IFRAME' && node?.contentDocument) {
         node.contentDocument.body.childNodes.forEach((node: any) => {
           this.insertFmwElement(node)
         });
@@ -40,7 +40,7 @@ class FindMultipleWords implements IFindMultipleWords {
     })
   }
 
-  private replaceElement(node: any): void {
+  private replaceElement(node: HTMLObjectElement): void {
     const fmwElement = document.createElement('i')
           fmwElement.className = 'fmw-style-container'
           fmwElement.style.fontStyle = 'normal'
@@ -77,43 +77,49 @@ class FindMultipleWords implements IFindMultipleWords {
     return posTop
   }
 
-  private deleteFmwElement(el: any): void {
-    const children = el.children
-    let i = children.length - 1
-    while(i >= 0) {
-      if(children[i].nodeName === 'IFRAME' && children[i].contentDocument) {
-        this.deleteFmwElement(children[i].contentDocument.body)
+  private deleteFmwElement(el: HTMLObjectElement): void {
+    el.childNodes.forEach((node: HTMLObjectElement) => {
+      if(String(node.className).indexOf('fmw-style-container') !== -1 && node.nodeName === 'I') {
+        node.outerHTML = node.textContent
+      } else if(node.nodeName === 'IFRAME' && node?.contentDocument) {
+        node.contentDocument.body.childNodes.forEach((node: any) => {
+          this.deleteFmwElement(node)
+        });
+      } else if(node.childNodes
+        && node.childNodes.length
+        && this.except.indexOf(node.nodeName) === -1) {
+          this.deleteFmwElement(node)
       }
-      if(children[i].children && children[i].children.length && this.except.indexOf(children[i].nodeName) === -1) {
-        this.deleteFmwElement(children[i])
-      }
-      if(String(children[i].className).indexOf('fmw-style-container') !== -1 && children[i].nodeName === 'I') {
-        children[i].outerHTML = children[i].textContent
-      }
-      i = i - 1
-    }
+    })
   }
 
   private startDomObserver(keywords: Array<string>): void {
-    const targetNode = document.body
-    const config = { 
+    let observeCount = 0
+    
+    this.observer = new MutationObserver(() => {
+      observeCount += 1
+      
+      if(this.lazySearch) clearTimeout(this.lazySearch)
+      
+      this.lazySearch = setTimeout(() => {
+        this.observer.disconnect()
+        this.searchDomElement(keywords)
+      }, 1000)
+
+      if(observeCount > 10) {
+        this.observer.disconnect()
+        this.searchDomElement(keywords)
+      }
+    })
+
+    this.observer.observe(document.body, { 
       childList: true,
       subtree: true,
       attributes: false,
       characterData: true,
       attributeOldValue: false,
       characterDataOldValue: false
-    }
-    
-    this.observer = new MutationObserver(() => {
-      if(this.lazySearch) clearTimeout(this.lazySearch)
-      this.lazySearch = setTimeout(() => {
-        this.observer.disconnect()
-        this.searchDomElement(keywords)
-      }, 1000)
     })
-
-    this.observer.observe(targetNode, config)
   }
 
   clearTimeoutSearch(): void {
@@ -122,19 +128,17 @@ class FindMultipleWords implements IFindMultipleWords {
   }
 
   searchDomElement(keywords: Array<string>): void {
-    this.wordCount = []
-    this.deleteFmwElement(this.body)
-    if(this.observer) this.observer.disconnect()
-    if(this.lazySearch) clearTimeout(this.lazySearch)
-    if(keywords.length === 0) return
+    this.clearTimeoutSearch()
+
+    // 기존 검색된 단어 제거
+    this.body.childNodes.forEach((node: HTMLObjectElement) => this.deleteFmwElement(node))
     
-    // 검색에 사용된 단어
     this.findWords = keywords
-    // 검색된 단어의 개수 파악
     this.wordCount = Array(keywords.length).fill(0)
-    // 검색된 단어의 위치값 파악
     this.wordPosition = Array(keywords.length).fill([])
-    this.body.childNodes.forEach(node => this.insertFmwElement(node))
+
+    // 단어 검색
+    this.body.childNodes.forEach((node: HTMLObjectElement) => this.insertFmwElement(node))
 
     whale.runtime.sendMessage({
       count: this.wordCount,

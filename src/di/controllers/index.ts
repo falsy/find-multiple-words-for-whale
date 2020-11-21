@@ -9,15 +9,10 @@ class Controller {
     private readonly storage: IStorageRepo,
   ) {}
 
-  private clearEventMessage(): void {
-    this.whale.clearEventMessage()
-  }
-
   private async setActiveTabList(tabList: Array<number>, setTabList: Function): Promise<void> {
     const currentTabId = await this.whale.getCurruntTabId()
     if(typeof currentTabId === 'number' && tabList.includes(currentTabId) === false) {
       setTabList([...tabList, currentTabId])
-      this.insertClassFmw()
     }
   }
 
@@ -27,7 +22,6 @@ class Controller {
       const keywords = this.storage.getkeywords()
 
       this.insertClassFmw()
-      this.clearEventMessage()
       this.searchExecute(keywords)
       setKeywords(keywords)
     })
@@ -37,6 +31,7 @@ class Controller {
       const keywords = this.storage.getkeywords()
 
       this.setActiveTabList(tabList, setTabList)
+      this.insertClassFmw()
       this.searchExecute(keywords)
       setKeywords(keywords)
     })
