@@ -2,7 +2,7 @@ import { EXCEPT_NODE_NAME, KEYWORDS_COLOR_SET } from "../../constants"
 import FindMultipleWords from "../data/FindMultipleWords"
 import { IBgeDTO } from "../dto/bgeDTO";
 import { IWhale } from "../infrastructures/interfaces/whale"
-import { IWhaleRepo } from "./interfaces/whaleRepo";
+import { IWhaleRepo } from "./interfaces/whaleRepo"
 
 class WhaleRepo implements IWhaleRepo {
 
