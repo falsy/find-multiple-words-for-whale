@@ -1,3 +1,5 @@
+import { EXCEPT_NODE_NAME, KEYWORDS_COLOR_SET } from "../../constants"
+import FindMultipleWords from "../data/FindMultipleWords"
 import { IBgeDTO } from "../dto/bgeDTO";
 import { IWhale } from "../infrastructures/interfaces/whale"
 import { IWhaleRepo } from "./interfaces/whaleRepo";
@@ -12,28 +14,43 @@ class WhaleRepo implements IWhaleRepo {
     this.cacheMessage = ''
   }
 
-  initClassFMW(classFmw: any): void {
-    this.whale.initClassFMW(classFmw)
+  initClassFMW(): void {
+    this.whale.executeScript(`
+      if(typeof fmwClass === 'undefined') {
+        window.fmwClass = new ${FindMultipleWords}(${KEYWORDS_COLOR_SET}, ${EXCEPT_NODE_NAME})
+      }
+    `)
   }
 
   moveScrollPosition(position: number): void {
-    this.whale.moveScrollPosition(position)
+    this.whale.executeScript(`
+      document.documentElement.scrollTop = ${position}
+    `)
   }
   
   searchDomElement(keywords: Array<string>): void {
-    this.whale.searchDomElement(keywords)
+    this.whale.executeScript(`
+      if(typeof fmwClass !== 'undefined') {
+        window.fmwClass.searchDomElement(${JSON.stringify(keywords)})
+      }
+    `)
   }
 
-  getCurruntTabId(): Promise<number> {
-    return this.whale.getCurruntTabId()
+  async getCurruntTabId(): Promise<number> {
+    const data = await this.whale.getCurruntTabData()
+    return data.tabs.filter((tab) => tab.active)[0]?.id
   }
   
   clearEventMessage(): void {
-    this.whale.clearEventMessage()
+    this.whale.executeScript(`
+      window.fmwClass.clearTimeoutSearch()
+    `)
   }
 
   onUpdateEvent(callback: Function): void {
-    this.whale.onUpdateEvent(callback)
+    this.whale.onUpdateEvent((changeInfo: chrome.tabs.TabChangeInfo) => {
+      if(changeInfo.status === 'complete') callback()
+    })
   }
 
   onActivatedEvent(callback: Function): void {

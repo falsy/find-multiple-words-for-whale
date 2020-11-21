@@ -1,22 +1,33 @@
 class FindMultipleWords {
-  constructor() {
-    this.body = document.body;
-    this.color = ['#AEDFDB', '#F4D94E', '#F38D9B', '#BEA6F9', '#99d45D'];
-    this.except = ['SCRIPT', 'LINK', 'STYLE', 'MAT-ICON'];
-    this.wordCount = [];
-    this.wordPosition = [];
-    this.observer = '';
-    this.lazySearch = '';
+
+  private readonly body: HTMLElement
+  private readonly color: Array<string>
+  private readonly except: Array<string>
+  private wordCount: Array<number>
+  private wordPosition: Array<Array<number>>
+  private findWords: Array<string>
+  private observer: any
+  private lazySearch: any
+
+  constructor(color: Array<string>, except: Array<string>) {
+    this.body = document.body
+    this.color = color
+    this.except = except
+    this.wordCount = []
+    this.wordPosition = []
+    this.findWords = []
+    this.observer = ''
+    this.lazySearch = ''
   }
 
-  insertFmwElement(el) {
-    el.childNodes.forEach(node => {
+  insertFmwElement(el: any) {
+    el.childNodes.forEach((node: any) => {
       if(node.nodeName === '#text'
         && this.except.indexOf(node.parentNode.nodeName) === -1
         && node.data.replace(/\t|\n| /gm, '') !== "") {
           this.replaceElement(node);
       } else if(node.nodeName === 'IFRAME' && node.contentDocument) {
-        node.contentDocument.body.childNodes.forEach(node => {
+        node.contentDocument.body.childNodes.forEach((node: any) => {
           this.insertFmwElement(node);
         });
       } else if(node.childNodes
@@ -27,7 +38,7 @@ class FindMultipleWords {
     });
   }
 
-  replaceElement(node) {
+  replaceElement(node: any) {
     const fmwElement = document.createElement('i');
           fmwElement.className = 'fmw-style-container';
           fmwElement.style.fontStyle = 'normal';
@@ -54,7 +65,7 @@ class FindMultipleWords {
     }
   }
 
-  elementAbsPositionTop(el) {
+  elementAbsPositionTop(el: any) {
     let posTop = 0;
     while(el.offsetParent) {
       posTop += el.offsetTop - el.scrollTop;
@@ -63,7 +74,7 @@ class FindMultipleWords {
     return posTop;
   }
 
-  deleteFmwElement(el) {
+  deleteFmwElement(el: any) {
     const children = el.children;
     let i = children.length - 1;
     while(i >= 0) {
@@ -89,7 +100,7 @@ class FindMultipleWords {
     if(this.lazySearch) clearTimeout(this.lazySearch);
   }
 
-  searchDomElement(keywords) {
+  searchDomElement(keywords: Array<string>) {
     this.wordCount = [];
     this.deleteFmwElement(this.body);
     if(this.observer) this.observer.disconnect();
@@ -112,7 +123,7 @@ class FindMultipleWords {
     this.startDomObserver(keywords);
   }
 
-  startDomObserver(keywords) {
+  startDomObserver(keywords: Array<string>) {
     const targetNode = document.body;
     const config = { 
       childList: true, 

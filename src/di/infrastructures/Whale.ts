@@ -9,63 +9,39 @@ class Whale implements IWhale {
     this.whale = window.whale
   }
 
-  initClassFMW(classFmw: any): void {
-    this.whale.tabs.executeScript({
-      code: `
-        if(typeof fmwClass === 'undefined') {
-          window.fmwClass = new ${classFmw}()
-        }
-      `
-    })
+  executeScript(code: string): void {
+    this.whale.tabs.executeScript({ code })
   }
 
-  moveScrollPosition(position: number): void {
-    this.whale.tabs.executeScript({
-      code: `document.documentElement.scrollTop = ${position}`
-    });
-  }
-  
-  searchDomElement(keywords: Array<string>): void {
-    this.whale.tabs.executeScript({
-      code: `
-        if(typeof fmwClass !== 'undefined') {
-          window.fmwClass.searchDomElement(${JSON.stringify(keywords)})
-        }
-      `
-    });
-  }
-
-  getCurruntTabId(): Promise<number> {
+  getCurruntTabData(): Promise<chrome.windows.Window> {
     return new Promise(resolve => {
       this.whale.windows.getCurrent({ populate: true }, (data) => {
-        resolve(data.tabs.filter((tab) => tab.active)[0]?.id)
+        resolve(data)
       })
-    })
-  }
-  
-  clearEventMessage(): void {
-    this.whale.tabs.executeScript({
-      code: `window.fmwClass.clearTimeoutSearch()`
     })
   }
 
   onUpdateEvent(callback: Function): void {
     this.whale.tabs.onUpdated.addListener((id, changeInfo) => {
-      if(changeInfo.status === 'complete') callback()
+      callback(changeInfo)
     })
   }
 
   onActivatedEvent(callback: Function): void {
-    this.whale.tabs.onActivated.addListener(() => callback())
+    this.whale.tabs.onActivated.addListener(() => {
+      callback()
+    })
   }
 
   onRemovedEvent(callback: Function): void {
-    this.whale.tabs.onRemoved.addListener((id: number) => callback(id))
+    this.whale.tabs.onRemoved.addListener((id: number) => {
+      callback(id)
+    })
   }
 
   onMessageEvent(callback: Function): void {
     this.whale.runtime.onMessage.addListener((data: IBgeParams) => {
-      return callback(new BgeDTO(data));
+      callback(new BgeDTO(data));
     })
   }
 }

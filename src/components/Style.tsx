@@ -8,6 +8,7 @@ const Style: React.FC = () => {
 
       * {
         box-sizing: border-box;
+        user-select: none;
       }
       
       body {

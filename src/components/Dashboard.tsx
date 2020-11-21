@@ -12,9 +12,7 @@ const Dashboard: React.FC = () => {
   const [keywords, setKeywords] = useState(ctrl.getkeywords())
   const [tabList, setTabList] = useState([])
   const [countList, setCountList] = useState([])
-  const [postionList, setPositionList] = useState([])
-  const [cacheIdx, setCacheIdx] = useState(0)
-  const [cacheCnt, setCacheCnt] = useState(0)
+  const [positionList, setPositionList] = useState([])
 
   useEffect(() => {
     ctrl.searchExecute(keywords)
@@ -28,7 +26,7 @@ const Dashboard: React.FC = () => {
   return (
     <>
       <Search setKeywords={setKeywords} />
-      <Keyword />
+      <Keyword keywords={keywords} setKeywords={setKeywords} countList={countList} positionList={positionList} />
       <Footer />
     </>
   )

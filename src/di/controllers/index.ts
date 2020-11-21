@@ -1,13 +1,12 @@
-import FindMultipleWords from "../data/FindMultipleWords"
 import { IBgeDTO } from "../dto/bgeDTO"
-import { IWebStorage } from "../infrastructures/interfaces/webStorage"
-import { IWhale } from "../infrastructures/interfaces/whale"
+import { IStorageRepo } from "../repositories/interfaces/storageRepo"
+import { IWhaleRepo } from "../repositories/interfaces/whaleRepo"
 
 class Controller {
 
   constructor(
-    private readonly whale: IWhale,
-    private readonly storage: IWebStorage,
+    private readonly whale: IWhaleRepo,
+    private readonly storage: IStorageRepo,
   ) {}
 
   private clearEventMessage(): void {
@@ -16,7 +15,7 @@ class Controller {
 
   private async setActiveTabList(tabList: Array<number>, setTabList: Function): Promise<void> {
     const currentTabId = await this.whale.getCurruntTabId()
-    if(tabList.includes(currentTabId) === false) {
+    if(typeof currentTabId === 'number' && tabList.includes(currentTabId) === false) {
       setTabList([...tabList, currentTabId])
       this.insertClassFmw()
     }
@@ -47,6 +46,7 @@ class Controller {
       setTabList(tabList.filter(id => id !== tabId))
     })
 
+    // 키워드 검색 후 키워드 개수 및 위치 값 저장
     this.whale.onMessageEvent((data: IBgeDTO) => {
       setCountList(data.count)
       setPositionList(data.position)
@@ -54,7 +54,7 @@ class Controller {
   }
 
   insertClassFmw(): void {
-    this.whale.initClassFMW(FindMultipleWords)
+    this.whale.initClassFMW()
   }
 
   searchExecute(keywords: Array<string>) {
@@ -64,6 +64,10 @@ class Controller {
 
   getkeywords(): Array<string> {
     return this.storage.getkeywords()
+  }
+
+  moveScrollPosition(position: number): void {
+    this.whale.moveScrollPosition(position)
   }
 
 }
