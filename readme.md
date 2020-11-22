@@ -12,4 +12,4 @@
 ![Capture](/src/imgs/screenshot-1.png)
 
 ### Version
-v1.5.1
+v1.5.2
