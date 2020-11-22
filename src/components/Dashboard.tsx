@@ -9,7 +9,7 @@ import Keyword from './Keyword'
 
 const Dashboard: React.FC = () => {
 
-  const [keywords, setKeywords] = useState(ctrl.getkeywords())
+  const [keywords, setKeywords] = useState(ctrl.getKeywords())
   const [tabList, setTabList] = useState([])
   const [countList, setCountList] = useState([])
   const [positionList, setPositionList] = useState([])

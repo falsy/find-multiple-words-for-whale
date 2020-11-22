@@ -11,8 +11,8 @@ class StorageRepo implements IStorageRepo {
     this.storage.setKeywords(keywords)
   }
 
-  getkeywords(): Array<string> {
-    return this.storage.getkeywords()
+  getKeywords(): Array<string> {
+    return this.storage.getKeywords()
   }
 
   removeKeywords(): void {

@@ -13,7 +13,7 @@ class WebStorage implements IWebStorage {
     this.local.setItem(KEYWORDS_STORAGE_KEY_NAME, JSON.stringify(keywords))
   }
 
-  getkeywords(): Array<string> {
+  getKeywords(): Array<string> {
     return this.local.getItem(KEYWORDS_STORAGE_KEY_NAME) === null 
       ? [] 
       : JSON.parse(this.local.getItem(KEYWORDS_STORAGE_KEY_NAME))

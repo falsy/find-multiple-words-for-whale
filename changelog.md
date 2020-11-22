@@ -1,6 +1,9 @@
+## v1.5.2
+* 메서드 이름 수정
+
 ## v1.5.1
 ### 2020-11-22
-* Typescript, Webpack, React 스택으로 리팩토링
+* Typescript, Webpack, React 구성으로 리팩토링
 * DOM 변화 감지(옵저버) 수정
 * 단어 위치 코드 오류 수정
 

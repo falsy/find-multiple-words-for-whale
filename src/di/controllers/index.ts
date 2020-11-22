@@ -20,7 +20,7 @@ class Controller implements IController {
   addWhaleEventListener(setKeywords: Function, tabList: Array<number>, setTabList: Function, setCountList: Function, setPositionList: Function): void {
     // 탭이 업데이트 되었을때, 다시 문서에서 단어를 검색하도록
     this.whale.onUpdateEvent(() => {
-      const keywords = this.storage.getkeywords()
+      const keywords = this.storage.getKeywords()
 
       this.insertClassFmw()
       this.searchExecute(keywords)
@@ -29,7 +29,7 @@ class Controller implements IController {
 
     // 다른 탭이 활성화 되었을때, 다시 문서에서 단어를 검색하도록
     this.whale.onActivatedEvent(() => {
-      const keywords = this.storage.getkeywords()
+      const keywords = this.storage.getKeywords()
 
       this.setActiveTabList(tabList, setTabList)
       this.insertClassFmw()
@@ -58,8 +58,8 @@ class Controller implements IController {
     this.whale.searchDomElement(keywords)
   }
 
-  getkeywords(): Array<string> {
-    return this.storage.getkeywords()
+  getKeywords(): Array<string> {
+    return this.storage.getKeywords()
   }
 
   moveScrollPosition(position: number): void {
