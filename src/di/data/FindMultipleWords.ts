@@ -51,7 +51,7 @@ class FindMultipleWords implements IFindMultipleWords {
       if(reg.test(nodeText)) {
         const className = `fmw-style fmw-style-${i}`
         const baseStyleText = "font-style: normal; display: inline; box-shadow: 1px 3px 3px rgba(0,0,0,0.2); border-radius: 4px; color: #000; white-space: initial;"
-        const divisionColor = `background: ${this.color[i]};`
+        const divisionColor = `background: ${this.color[i % 10]};`
         nodeText = nodeText.replace(reg, `<i class="${className}" style="${baseStyleText + divisionColor}">\$&</i>`)
         
         // 검색된 키워드 카운팅
