@@ -3,6 +3,8 @@ import { useState, useEffect } from "react"
 import styled from '@emotion/styled'
 import { KEYWORDS_COLOR_SET } from '../constants'
 
+import On from '../icons/On'
+import Off from '../icons/Off'
 import ctrl from '../di'
 
 interface IProps {
@@ -16,15 +18,25 @@ const Keyword: React.FC<IProps> = ({ keywords, setKeywords, countList, positionL
 
   const [cacheIdx, setCacheIdx] = useState(0)
   const [cacheCnt, setCacheCnt] = useState(0)
+  const [isHiddenMode, setHiddenMode] = useState(false)
+
+  const viewKeywords = isHiddenMode ? keywords.filter((_, i) => countList[i] !== 0) : keywords
+  const viewCountList = isHiddenMode ? countList.filter(count => count !== 0) : countList
+  const viewPositionList = isHiddenMode ? positionList.filter(positionArr => positionArr.length > 0) : positionList
 
   const handleClickRemoveKeyword = (targetKeyword: string) => {
     setKeywords(keywords.filter(keyword => keyword !== targetKeyword))
   }
 
+  const handleClickHiddenMode = (mode: boolean) => {
+    setHiddenMode(mode)
+  }
+
   const handleClickMovePosition = (idx: number) => {
     const index = cacheIdx === idx ? cacheIdx : idx
-    const targetPositionList = positionList[index]
-    const count = cacheCnt +  1 > targetPositionList.length ? 0 : cacheCnt
+    const cacheIdxCount = cacheIdx === idx ? cacheCnt : 0
+    const targetPositionList = viewPositionList[index]
+    const count = cacheIdxCount +  1 > targetPositionList.length ? 0 : cacheIdxCount
 
     ctrl.moveScrollPosition(targetPositionList[count])
     setCacheCnt(count + 1)
@@ -33,16 +45,20 @@ const Keyword: React.FC<IProps> = ({ keywords, setKeywords, countList, positionL
 
   return (
     <section>
-      {keywords.length > 0 && (
+      {viewKeywords.length > 0 && (
         <>
           <S_Title>Keywords</S_Title>
-          <S_KeywordListArea keywordLen={keywords.length}>
-              {keywords.map((keyword: string, i: number) => (
+          <S_Option isHiddenMode={isHiddenMode}>
+            <p>검색 결과 없는 단어 제외</p>
+            <p onClick={() => handleClickHiddenMode(!isHiddenMode)}>
+              {isHiddenMode ? <On />: <Off />}
+            </p> 
+          </S_Option>
+          <S_KeywordListArea keywordLen={viewKeywords.length}>
+              {viewKeywords.map((keyword: string, i: number) => (
                 <S_KeywordList key={i} no={i}>
                   <S_Keyword onClick={handleClickMovePosition.bind(this, i)}>{keyword}</S_Keyword>
-                  {!!countList[i] && (
-                    <span>({countList[i]})</span>
-                  )}
+                  <span>({viewCountList[i]})</span>
                   <S_DeleteKeywordBtn width="24" height="24" fill-rule="evenodd" clip-rule="evenodd" onClick={handleClickRemoveKeyword.bind(this, keyword)}>
                     <path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z"></path>
                   </S_DeleteKeywordBtn>
@@ -63,11 +79,30 @@ const S_Title = styled.h2`
   border-top: 1px solid #eee;
   font-size: 12px;
   color: #444;
-  margin: 46px 0 15px;
+  margin: 46px 0 5px;
+`
+
+const S_Option = styled.div<{isHiddenMode: boolean}>`
+  display: flex;
+  line-height: 24px;
+  padding-bottom: 10px;
+  p {
+    margin: 0;
+    &:first-of-type {
+      margin-right: 8px;
+    }
+    svg {
+      vertical-align: top;
+      cursor: pointer;
+      color: #858585;
+      ${props => props.isHiddenMode && 'color: #20d1b1;'}
+    }
+  }
 `
 
 const S_KeywordListArea = styled.ul<{keywordLen: number}>`
   padding: 0;
+  margin: 0;
   list-style: none;
 
   span {
@@ -112,7 +147,7 @@ const S_KeywordListArea = styled.ul<{keywordLen: number}>`
 const S_KeywordList = styled.li<{no: number}>`
   position: relative;
   background: #fff;
-  margin-bottom: 2%;
+  margin: 1.2% 0;
   &::before {
     content: '';
     position: absolute;
