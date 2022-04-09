@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { useState } from 'react'
 import styled from '@emotion/styled'
-import { css } from '@emotion/react'
 
 interface IProps {
   setKeywords(keywords: Array<string>): void;
@@ -21,7 +20,6 @@ const Search: React.FC<IProps> = ({ setKeywords }) => {
         .split(',')
         .map((keyword: string) => keyword.trim())
         .filter(Boolean))
-      setKeyword('')
     }
   };
 
@@ -58,7 +56,7 @@ const S_SearchBox = styled.div<{ isLongkeyword: boolean; }>`
     line-height: 28px;
     height: 50px;
     padding: 3px 15px 3px 45px;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 500;
     color: #5a6767;
     display: inline-block;
@@ -66,7 +64,7 @@ const S_SearchBox = styled.div<{ isLongkeyword: boolean; }>`
     border: 0;
     transition: 0.3s;
     ${props => props.isLongkeyword && `
-      font-size: 12px;
+      font-size: 14px;
     `}
     &:focus {
       outline: none;
