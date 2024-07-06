@@ -1,5 +1,4 @@
 export interface IWhaleRepo {
-  initClassFMW(): void
   moveScrollPosition(position: number): void
   searchDomElement(keywords: Array<string>): void
   getCurruntTabId(): Promise<number>

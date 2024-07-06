@@ -1,11 +1,11 @@
 whale.commands.onCommand.addListener((command) => {
-  if (command === 'open-sidebar') {
-    whale.sidebarAction.show();
+  if (command === "open-sidebar") {
+    whale.sidebarAction.show()
   }
-});
+})
 
 whale.runtime.onMessage.addListener((message, sender, sendResponse) => {
-	if(message) {
-		whale.tabs.sendMessage(sender.tab.id, message);
-	}
-});
+  if (message) {
+    whale.tabs.sendMessage(sender.tab.id, message)
+  }
+})

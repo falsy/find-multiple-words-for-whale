@@ -1,7 +1,9 @@
-import * as React from "react"
-import * as ReactDOM from "react-dom"
-import Style from './components/Style'
+import ReactDOM from "react-dom/client"
+import Style from "./components/Style"
 import Dashboard from "./components/Dashboard"
+
+const container = document.getElementById("wrap")
+const root = ReactDOM.createRoot(container as HTMLElement)
 
 const App = () => {
   return (
@@ -12,4 +14,4 @@ const App = () => {
   )
 }
 
-ReactDOM.render(<App />, document.getElementById("wrap"))
+root.render(<App />)
