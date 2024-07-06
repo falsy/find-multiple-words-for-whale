@@ -1,7 +1,7 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "여러 단어 찾기",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "문서에서 여러 단어를 찾습니다.",
   "icons": {
     "32": "./imgs/fmw-icon-32.png",
@@ -15,10 +15,6 @@
     "default_title": "단어 찾기",
     "use_navigation_bar": false
   },
-  "permissions": [
-    "<all_urls>",
-    "activeTab"
-  ],
   "commands": {
     "open-sidebar": {
       "suggested_key": {
@@ -28,8 +24,9 @@
       "description": "사이드바 On/Off 단축키"
     }
   },
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": ["http://*/*", "https://*/*"],
   "background": {
-    "scripts": ["background.js"],
-    "persistent": false
+    "service_worker": "background.js"
   }
 }

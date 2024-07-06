@@ -1,14 +1,13 @@
-import * as React from 'react'
+import * as React from "react"
 import { useState, useEffect } from "react"
 
-import ctrl from '../di'
+import ctrl from "../di"
 
-import Footer from './Footer'
-import Search from './Search'
-import Keyword from './Keyword'
+import Footer from "./Footer"
+import Search from "./Search"
+import Keyword from "./Keyword"
 
 const Dashboard: React.FC = () => {
-
   const [keywords, setKeywords] = useState(ctrl.getKeywords())
   const [tabList, setTabList] = useState([])
   const [countList, setCountList] = useState([])
@@ -19,19 +18,27 @@ const Dashboard: React.FC = () => {
   }, [keywords])
 
   useEffect(() => {
-    ctrl.insertClassFmw()
-    ctrl.addWhaleEventListener(setKeywords, tabList, setTabList, setCountList, setPositionList)
+    ctrl.addWhaleEventListener(
+      setKeywords,
+      tabList,
+      setTabList,
+      setCountList,
+      setPositionList
+    )
   }, [])
 
   return (
     <>
       <Search setKeywords={setKeywords} />
-      <Keyword keywords={keywords} setKeywords={setKeywords} countList={countList} positionList={positionList} />
+      <Keyword
+        keywords={keywords}
+        setKeywords={setKeywords}
+        countList={countList}
+        positionList={positionList}
+      />
       <Footer />
     </>
   )
 }
 
 export default Dashboard
-
-

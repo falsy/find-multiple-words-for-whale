@@ -1,6 +1,6 @@
-import repositories from "./repositories"
-import infrastructures from "./infrastructures"
-import Controller from './controllers'
+import repositories from "../adapters/repositories"
+import infrastructures from "../adapters/infrastructures"
+import Controller from "../adapters/controllers"
 
 const infra = infrastructures()
 const repo = repositories(infra)
