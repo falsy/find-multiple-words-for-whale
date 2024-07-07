@@ -54,9 +54,19 @@ class Controller implements IController {
     })
   }
 
-  searchExecute(keywords: Array<string>): void {
+  searchExecute(
+    keywords: Array<string>,
+    setCountList: Function,
+    setPositionList: Function,
+    setUnsupportedPage: Function
+  ): void {
     this.storageRepo.setKeywords(keywords)
-    this.whaleRepo.searchDomElement(keywords)
+    this.whaleRepo.searchDomElement(
+      keywords,
+      setCountList,
+      setPositionList,
+      setUnsupportedPage
+    )
   }
 
   getKeywords(): Array<string> {

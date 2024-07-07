@@ -19,9 +19,27 @@ class WhaleRepo implements IWhaleRepo {
     })
   }
 
-  async searchDomElement(keywords: Array<string>): Promise<void> {
-    const tabId = await this.getCurruntTabId()
-    await this.whale.setLocalStoage("fmwActiveTabId", tabId)
+  async searchDomElement(
+    keywords: Array<string>,
+    setCountList: Function,
+    setPositionList: Function,
+    setUnsupportedPage: Function
+  ): Promise<void> {
+    const tabData = await this.whale.getCurruntTabData()
+
+    if (
+      !tabData.url ||
+      tabData.url.startsWith("chrome://") ||
+      tabData.url.startsWith("chrome-extension://") ||
+      tabData.url.startsWith("https://store.whale.naver.com/")
+    ) {
+      setCountList(Array(keywords.length).fill(0))
+      setPositionList(Array(keywords.length).fill([]))
+      setUnsupportedPage(true)
+      return
+    }
+
+    await this.whale.setLocalStoage("fmwActiveTabId", tabData.id)
     await this.whale.setLocalStoage("fmwKeywords", keywords)
     this.whale.executeScript(() => {
       ;(window as any).whale.storage.local.get(

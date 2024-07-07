@@ -2,11 +2,12 @@ import { useState } from "react"
 import styled from "@emotion/styled"
 
 interface IProps {
+  searchInput: React.MutableRefObject<HTMLInputElement>
   keywords: Array<string>
   setKeywords(keywords: Array<string>): void
 }
 
-const Search = ({ keywords, setKeywords }: IProps) => {
+const Search = ({ searchInput, keywords, setKeywords }: IProps) => {
   const [keywordString, setKeywordString] = useState("")
   const [alertMessage, setAlertMessage] = useState("")
 
@@ -61,11 +62,12 @@ const Search = ({ keywords, setKeywords }: IProps) => {
       </h2>
       <$searchBox>
         <input
+          ref={searchInput}
           type="text"
           onChange={handleOnChangeKeyword}
-          onKeyPress={handleKeyPressKeywords}
+          onKeyDown={handleKeyPressKeywords}
           placeholder="Nice, To, Meet, You"
-          autoComplete="off"
+          // autoComplete="off"
           autoFocus={true}
           value={keywordString}
         />

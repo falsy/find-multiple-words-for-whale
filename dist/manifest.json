@@ -20,18 +20,6 @@
     "default_title": "단어 찾기",
     "use_navigation_bar": false
   },
-  "commands": {
-    "open-sidebar": {
-      "suggested_key": {
-        "default": "Alt+W",
-        "mac": "Alt+W"
-      },
-      "description": "사이드바 On/Off 단축키"
-    }
-  },
   "permissions": ["activeTab", "scripting", "storage"],
-  "host_permissions": ["http://*/*", "https://*/*"],
-  "background": {
-    "service_worker": "background.js"
-  }
+  "host_permissions": ["http://*/*", "https://*/*"]
 }

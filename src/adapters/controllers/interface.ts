@@ -6,8 +6,12 @@ export interface IController {
     setCountList: Function,
     setPositionList: Function
   ): void
-  // insertClassFmw(): void
-  searchExecute(keywords: Array<string>): void
+  searchExecute(
+    keywords: Array<string>,
+    setCountList: Function,
+    setPositionList: Function,
+    setUnsupportedPage: Function
+  ): void
   getKeywords(): Array<string>
   moveScrollPosition(position: number): void
 }
