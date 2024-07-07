@@ -34,20 +34,16 @@ class Controller implements IController {
       const keywords = this.storageRepo.getKeywords()
       setKeywords(keywords)
     })
-
     // 다른 탭이 활성화 되었을때, 다시 문서에서 단어를 검색하도록
     this.whaleRepo.onActivatedEvent(() => {
       const keywords = this.storageRepo.getKeywords()
-
       this.setActiveTabList(tabList, setTabList)
       setKeywords(keywords)
     })
-
     // 탭이 종료되었을때
     this.whaleRepo.onRemovedEvent((tabId: number) => {
       setTabList(tabList.filter((id) => id !== tabId))
     })
-
     // 키워드 검색 후 키워드 개수 및 위치 값 저장
     this.whaleRepo.onMessageEvent(async (data: IBgeDTO) => {
       const tabId = await this.whaleRepo.getCurruntTabId()

@@ -144,6 +144,13 @@ const $searchForm = styled.section`
       font-weight: 400;
       font-size: 12px;
     }
+
+    @media (prefers-color-scheme: dark) {
+      color: #ddd;
+      span {
+        color: #bbb;
+      }
+    }
   }
 `
 
@@ -166,6 +173,15 @@ const $searchBox = styled.div`
       outline: none;
       color: #5a6767;
       box-shadow: 2px 2px 18px 0px rgba(0, 0, 0, 0.1);
+      @media (prefers-color-scheme: dark) {
+        color: #fff;
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      background: rgb(70, 70, 70);
+      border-color: rgb(35, 35, 35);
+      color: #ddd;
     }
   }
 `
@@ -185,7 +201,8 @@ const $searchBtn = styled.div`
   cursor: pointer;
   border: 1px solid rgb(0, 209, 148);
   &:hover {
-    background: rgb(0, 209, 148);
+    background: #00c88d;
+    border-color: #00c88d;
   }
   p {
     display: flex;
