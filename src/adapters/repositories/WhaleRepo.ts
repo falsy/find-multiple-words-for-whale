@@ -43,9 +43,9 @@ class WhaleRepo implements IWhaleRepo {
           ]
           const EXCEPT_NODE_NAME = ["SCRIPT", "LINK", "STYLE", "MAT-ICON"]
 
-          let lazySearch: any = null
-          let wordCount: number[] | null = null
-          let wordPosition: number[][] | null = null
+          let lazySearch = null
+          let wordCount: number[] = null
+          let wordPosition: number[][] = null
 
           // DOM 변화 확인
           const observerConfig = {
@@ -56,11 +56,9 @@ class WhaleRepo implements IWhaleRepo {
             attributeOldValue: false,
             characterDataOldValue: false,
           }
-          const observer: any = new MutationObserver(() => {
+          const observer = new MutationObserver(() => {
             if (lazySearch) clearTimeout(lazySearch)
-            lazySearch = setTimeout(() => {
-              searchActions()
-            }, 1000)
+            lazySearch = setTimeout(searchActions, 1000)
           })
 
           // FMW 엘리먼트 삭제
@@ -85,39 +83,40 @@ class WhaleRepo implements IWhaleRepo {
             })
           }
 
+          const compiledKeywords = fmwKeywords.map(
+            (word: string, i: number) => ({
+              regex: new RegExp(word, "gim"),
+              className: `fmw-style fmw-style-${i}`,
+              style: `font-style: normal; display: inline; box-shadow: 1px 3px 3px rgba(0,0,0,0.2); border-radius: 4px; color: #000; white-space: initial; background: ${
+                KEYWORDS_COLOR_SET[i % KEYWORDS_COLOR_SET.length]
+              };`,
+            })
+          )
+
           // FMW 엘리먼트 변환
           const replaceElement = (node: HTMLObjectElement) => {
             const fmwElement = document.createElement("i")
             fmwElement.className = "fmw-style-container"
             fmwElement.style.fontStyle = "normal"
             let nodeText = node.data
-            fmwKeywords.forEach((word, i) => {
-              const reg = new RegExp(word, "gim")
-              if (reg.test(nodeText)) {
-                const className = `fmw-style fmw-style-${i}`
-                const baseStyleText =
-                  "font-style: normal; display: inline; box-shadow: 1px 3px 3px rgba(0,0,0,0.2); border-radius: 4px; color: #000; white-space: initial;"
-                const divisionColor = `background: ${
-                  KEYWORDS_COLOR_SET[i % 10]
-                };`
-                nodeText = nodeText.replace(
-                  reg,
-                  `<i class="${className}" style="${
-                    baseStyleText + divisionColor
-                  }">\$&</i>`
-                )
+            compiledKeywords.forEach(
+              ({ regex, className, style }, i: number) => {
+                if (regex.test(nodeText)) {
+                  nodeText = nodeText.replace(
+                    regex,
+                    `<i class="${className}" style="${style}">\$&</i>`
+                  )
 
-                // 검색된 키워드 카운팅 및 위치값 기록
-                wordCount[i] += 1
-                const targetEl = node.parentElement
-                const targetPosition =
-                  window.scrollY + targetEl.getBoundingClientRect().top
-                const marginScroll = 20
-                wordPosition[i] = wordPosition[i].concat(
-                  targetPosition - marginScroll
-                )
+                  // 검색된 키워드 카운팅 및 위치값 기록
+                  wordCount[i] += 1
+                  const targetEl = node.parentElement
+                  const targetPosition =
+                    window.scrollY + targetEl.getBoundingClientRect().top
+                  const marginScroll = 20
+                  wordPosition[i].push(targetPosition - marginScroll)
+                }
               }
-            })
+            )
             if (node.data !== nodeText) {
               fmwElement.innerHTML = nodeText
               node.parentNode.replaceChild(fmwElement, node)
@@ -149,26 +148,19 @@ class WhaleRepo implements IWhaleRepo {
 
           const searchActions = () => {
             // DOM 변화 감시 중단
-            if (observer) {
-              observer.disconnect()
-            }
-
+            observer.disconnect()
             if ((window as any).fmwMutationObserver) {
               ;(window as any).fmwMutationObserver.disconnect()
             }
 
             // 엘리먼트 순회하며 FMW 엘리먼트 삭제
-            document.body.childNodes.forEach((node: HTMLObjectElement) =>
-              deleteFmwElement(node)
-            )
+            document.body.childNodes.forEach(deleteFmwElement)
 
             wordCount = Array(fmwKeywords.length).fill(0)
             wordPosition = Array(fmwKeywords.length).fill([])
 
             // 엘리먼트 순회하며 FMW 엘리먼트 적용
-            document.body.childNodes.forEach((node: HTMLObjectElement) =>
-              insertFmwElement(node)
-            )
+            document.body.childNodes.forEach(insertFmwElement)
 
             // 검색어에 따른 FMW 엘리먼트 카운팅 및 포지션 캐시
             ;(window as any).whale.runtime.sendMessage({

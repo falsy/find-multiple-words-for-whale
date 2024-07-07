@@ -209,7 +209,8 @@ const $keywordList = styled.li<{ no: number }>`
     left: 0;
     width: 6px;
     height: 100%;
-    background: ${(props) => KEYWORDS_COLOR_SET[props.no % 10]};
+    background: ${(props) =>
+      KEYWORDS_COLOR_SET[props.no % KEYWORDS_COLOR_SET.length]};
   }
   &::after {
     content: "";
@@ -256,14 +257,14 @@ const $deleteKeywordBtn = styled.div<{ isSliceList: boolean }>`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
     cursor: pointer;
     background: #00dc9b;
     border: 1px solid rgb(0, 209, 148);
     border-radius: 15px;
     svg {
-      width: 16px;
+      width: 15px;
       height: auto;
       stroke: #fff;
     }

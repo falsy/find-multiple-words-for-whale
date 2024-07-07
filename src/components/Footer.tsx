@@ -19,5 +19,5 @@ const $footer = styled.footer`
   font-weight: 500;
   position: sticky;
   top: 100%;
-  padding: 10px 0px 5px 0px;
+  padding: 10px 0px 10px 0px;
 `
