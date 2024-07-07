@@ -1,21 +1,23 @@
-import * as React from 'react'
-import styled from '@emotion/styled'
+import styled from "@emotion/styled"
 
-const Footer: React.FC = () => {
+const Footer = () => {
   return (
-    <S_Footer>
-      &copy; <a href="https://falsy.me" target="_blank">falsy</a>
-    </S_Footer>
+    <$footer>
+      &copy;{" "}
+      <a href="https://falsy.me" target="_blank">
+        falsy
+      </a>
+    </$footer>
   )
-};
+}
 
 export default Footer
 
-const S_Footer = styled.footer`
-  color: #444;
-  font-size: 11px;
-  font-weight: bold;
-  position: fixed;
-  bottom: 15px;
-  left: 20px;
+const $footer = styled.footer`
+  color: rgb(170, 170, 170);
+  font-size: 12px;
+  font-weight: 500;
+  position: sticky;
+  top: 100%;
+  padding: 10px 0px 5px 0px;
 `

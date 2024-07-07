@@ -49,9 +49,12 @@ class Controller implements IController {
     })
 
     // 키워드 검색 후 키워드 개수 및 위치 값 저장
-    this.whaleRepo.onMessageEvent((data: IBgeDTO) => {
-      setCountList(data.count)
-      setPositionList(data.position)
+    this.whaleRepo.onMessageEvent(async (data: IBgeDTO) => {
+      const tabId = await this.whaleRepo.getCurruntTabId()
+      if (tabId === data.tabId) {
+        setCountList(data.count)
+        setPositionList(data.position)
+      }
     })
   }
 

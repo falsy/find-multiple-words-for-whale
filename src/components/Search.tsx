@@ -1,89 +1,156 @@
-import * as React from 'react'
-import { useState } from 'react'
-import styled from '@emotion/styled'
+import { useState } from "react"
+import styled from "@emotion/styled"
 
 interface IProps {
-  setKeywords(keywords: Array<string>): void;
+  keywords: Array<string>
+  setKeywords(keywords: Array<string>): void
 }
 
-const Search: React.FC<IProps> = ({ setKeywords }) => {
-
-  const [keyword, setKeyword] = useState('')
+const Search = ({ keywords, setKeywords }: IProps) => {
+  const [keywordString, setKeywordString] = useState("")
 
   const handleOnChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setKeyword(e.target.value)
+    setKeywordString(e.target.value)
+  }
+
+  const addKeywords = () => {
+    const newKeywordList = keywordString
+      .split(",")
+      .map((keyword: string) => {
+        const trimKeyword = keyword.trim()
+        return trimKeyword.length > 1 ? trimKeyword : ""
+      })
+      .filter(Boolean)
+    const newKeywords = Array.from(new Set(keywords.concat(newKeywordList)))
+    setKeywords(newKeywords)
+    setKeywordString("")
   }
 
   const handleKeyPressKeywords = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if(e.key === 'Enter') {
-      setKeywords(keyword
-        .split(',')
-        .map((keyword: string) => keyword.trim())
-        .filter(Boolean))
+    if (e.key === "Enter") {
+      addKeywords()
     }
-  };
+  }
+
+  const handleClickAddKeyword = () => {
+    addKeywords()
+  }
 
   return (
-    <S_SearchForm>
-      <h2>Search</h2>
-      <S_SearchBox isLongkeyword={keyword.length > 15}>
-        <S_SearchIcon>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#e2e4e3"/><path d="M0 0h24v24H0z" fill="none"/></svg>
-        </S_SearchIcon>
-        <input type="text" onChange={handleOnChangeKeyword} onKeyPress={handleKeyPressKeywords} placeholder="Nice, To, Meet, You" autoComplete="off" autoFocus={true} />
-      </S_SearchBox>
-      <S_PsText>- 쉼표(,)로 구분하여 여러 단어를 찾을 수 있습니다.</S_PsText>
-    </S_SearchForm>
+    <$searchForm>
+      <h2>
+        단어 추가
+        <span>(쉼표","로 구분하여 여러 단어를 추가할 수도 있어요)</span>
+      </h2>
+      <$searchBox>
+        <input
+          type="text"
+          onChange={handleOnChangeKeyword}
+          onKeyPress={handleKeyPressKeywords}
+          placeholder="Nice, To, Meet, You"
+          autoComplete="off"
+          autoFocus={true}
+          value={keywordString}
+        />
+        <$searchBtn onClick={handleClickAddKeyword}>
+          <p>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            추가
+          </p>
+        </$searchBtn>
+      </$searchBox>
+    </$searchForm>
   )
 }
 
 export default Search
 
-const S_SearchForm = styled.section`
+const $searchForm = styled.section`
   width: 100%;
   position: relative;
   h2 {
-    font-size: 12px;
+    font-size: 14px;
     color: #444;
-    margin: 10px 0 15px;
+    margin: 10px 0 15px 1px;
+    span {
+      display: inline-block;
+      margin-left: 5px;
+      color: #656565;
+      font-weight: 400;
+      font-size: 12px;
+    }
   }
 `
 
-const S_SearchBox = styled.div<{ isLongkeyword: boolean; }>`
+const $searchBox = styled.div`
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   input {
     line-height: 28px;
     height: 50px;
-    padding: 3px 15px 3px 45px;
+    padding: 3px 100px 3px 25px;
     font-size: 18px;
     font-weight: 500;
     color: #5a6767;
     display: inline-block;
     width: 100%;
-    border: 0;
+    border: 1px solid #e6e6e6;
     transition: 0.3s;
-    ${props => props.isLongkeyword && `
-      font-size: 14px;
-    `}
+    border-radius: 30px;
     &:focus {
       outline: none;
       color: #5a6767;
-      box-shadow: 2px 2px 18px 0px rgba(0,0,0,0.1);
+      box-shadow: 2px 2px 18px 0px rgba(0, 0, 0, 0.1);
     }
   }
 `
 
-const S_SearchIcon = styled.p`
-  margin: 0;
+const $searchBtn = styled.div`
+  width: 80px;
+  height: 38px;
+  background: #00dc9b;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: absolute;
-  top: 15px;
-  left: 14px;
-`
-
-const S_PsText = styled.p`
-  color: #656565;
-  padding-left: 2px;
-  margin: 8px 0 0;
-  font-size: 12px;
+  top: 6px;
+  right: 6px;
+  transition: all 0.3s;
+  cursor: pointer;
+  border: 1px solid rgb(0, 209, 148);
+  &:hover {
+    background: rgb(0, 209, 148);
+  }
+  p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: #fff;
+    text-shadow: rgba(7, 92, 67, 0.3) 0px 0px 1px;
+    svg {
+      display: inline-block;
+      margin-right: 3px;
+      width: 16px;
+      height: auto;
+      stroke: #fff;
+      line {
+        box-shadow: rgba(7, 92, 67, 1) 0px 0px 1px;
+      }
+    }
+  }
 `
