@@ -20,25 +20,32 @@ const Search = ({ keywords, setKeywords }: IProps) => {
       .split(",")
       .map((keyword: string) => {
         const trimKeyword = keyword.trim()
-        if (!isOneSyllable && trimKeyword.length === 1) isOneSyllable = true
-        return keyword.length > 1 ? keyword : ""
+        if (trimKeyword.length === 1 && /[^가-힣]/g.test(trimKeyword)) {
+          isOneSyllable = true
+          return ""
+        }
+        return keyword
       })
       .filter(Boolean)
     const newKeywords = Array.from(new Set(keywords.concat(newKeywordList)))
     setKeywords(newKeywords)
     setKeywordString("")
     if (isOneSyllable) {
-      setAlertMessage("2글자 이상의 단어만 추가할 수 있습니다.")
+      setAlertMessage(
+        "영문, 숫자, 특수 문자는 두 글자 이상부터 추가할 수 있습니다."
+      )
     }
   }
 
   const handleKeyPressKeywords = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
+      setAlertMessage("")
       addKeywords()
     }
   }
 
   const handleClickAddKeyword = () => {
+    setAlertMessage("")
     addKeywords()
   }
 
@@ -204,7 +211,7 @@ const $alertMessage = styled.div`
   background: #fff7df;
   color: #cda126;
   border: 1px solid #f7e5ad;
-  padding: 10px 10px 10px 15px;
+  padding: 8px 8px 8px 12px;
   border-radius: 6px;
   line-height: 20px;
   display: flex;
@@ -215,7 +222,7 @@ const $alertMessage = styled.div`
     margin-right: 7px;
   }
   p {
-    font-size: 13px;
+    font-size: 11px;
     width: 100%;
   }
   p + svg {
