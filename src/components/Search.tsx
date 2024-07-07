@@ -8,22 +8,28 @@ interface IProps {
 
 const Search = ({ keywords, setKeywords }: IProps) => {
   const [keywordString, setKeywordString] = useState("")
+  const [alertMessage, setAlertMessage] = useState("")
 
   const handleOnChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKeywordString(e.target.value)
   }
 
   const addKeywords = () => {
+    let isOneSyllable = false
     const newKeywordList = keywordString
       .split(",")
       .map((keyword: string) => {
         const trimKeyword = keyword.trim()
-        return trimKeyword.length > 1 ? trimKeyword : ""
+        if (!isOneSyllable && trimKeyword.length === 1) isOneSyllable = true
+        return keyword.length > 1 ? keyword : ""
       })
       .filter(Boolean)
     const newKeywords = Array.from(new Set(keywords.concat(newKeywordList)))
     setKeywords(newKeywords)
     setKeywordString("")
+    if (isOneSyllable) {
+      setAlertMessage("2글자 이상의 단어만 추가할 수 있습니다.")
+    }
   }
 
   const handleKeyPressKeywords = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -36,11 +42,15 @@ const Search = ({ keywords, setKeywords }: IProps) => {
     addKeywords()
   }
 
+  const handleClickAlert = () => {
+    setAlertMessage("")
+  }
+
   return (
     <$searchForm>
       <h2>
         단어 추가
-        <span>(쉼표","로 구분하여 여러 단어를 추가할 수도 있어요)</span>
+        <span>(쉼표","로 구분하여 여러 단어를 추가할 수도 있습니다.)</span>
       </h2>
       <$searchBox>
         <input
@@ -72,6 +82,41 @@ const Search = ({ keywords, setKeywords }: IProps) => {
           </p>
         </$searchBtn>
       </$searchBox>
+      {alertMessage && (
+        <$alertMessage>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <p>{alertMessage}</p>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            onClick={handleClickAlert}
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </$alertMessage>
+      )}
     </$searchForm>
   )
 }
@@ -152,5 +197,30 @@ const $searchBtn = styled.div`
         box-shadow: rgba(7, 92, 67, 1) 0px 0px 1px;
       }
     }
+  }
+`
+
+const $alertMessage = styled.div`
+  background: #fff7df;
+  color: #cda126;
+  border: 1px solid #f7e5ad;
+  padding: 10px 10px 10px 15px;
+  border-radius: 6px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  svg:first-of-type {
+    width: 18px;
+    height: auto;
+    margin-right: 7px;
+  }
+  p {
+    font-size: 13px;
+    width: 100%;
+  }
+  p + svg {
+    width: 18px;
+    height: auto;
+    cursor: pointer;
   }
 `
