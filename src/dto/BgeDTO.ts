@@ -1,20 +1,24 @@
 export interface IBgeParams {
+  tabId: number
   count: number
   position: number
 }
 
 export interface IBgeDTO {
+  tabId: number
   count: number
   position: number
 }
 
 class BgeDTO implements IBgeDTO {
-  count: number;
-  position: number;
-  
+  tabId: number
+  count: number
+  position: number
+
   constructor(dataParams: IBgeParams) {
-    this.count = dataParams.count;
-    this.position = dataParams.position;
+    this.tabId = dataParams.tabId
+    this.count = dataParams.count
+    this.position = dataParams.position
   }
 }
 

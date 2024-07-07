@@ -6,6 +6,7 @@ import ctrl from "../di"
 import Footer from "./Footer"
 import Search from "./Search"
 import Keyword from "./Keyword"
+import styled from "@emotion/styled"
 
 const Dashboard: React.FC = () => {
   const [keywords, setKeywords] = useState(ctrl.getKeywords())
@@ -28,8 +29,8 @@ const Dashboard: React.FC = () => {
   }, [])
 
   return (
-    <>
-      <Search setKeywords={setKeywords} />
+    <$area>
+      <Search keywords={keywords} setKeywords={setKeywords} />
       <Keyword
         keywords={keywords}
         setKeywords={setKeywords}
@@ -37,8 +38,12 @@ const Dashboard: React.FC = () => {
         positionList={positionList}
       />
       <Footer />
-    </>
+    </$area>
   )
 }
 
 export default Dashboard
+
+const $area = styled.div`
+  height: 100%;
+`

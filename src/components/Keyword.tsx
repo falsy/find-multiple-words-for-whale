@@ -23,9 +23,14 @@ const Keyword: React.FC<IProps> = ({
   const viewKeywords = keywords
   const viewCountList = countList
   const viewPositionList = positionList
+  const isSliceList = viewKeywords.length > 10
 
   const handleClickRemoveKeyword = (targetKeyword: string) => {
     setKeywords(keywords.filter((keyword) => keyword !== targetKeyword))
+  }
+
+  const handleClickRemoveAllKeyword = () => {
+    setKeywords([])
   }
 
   const handleClickMovePosition = (idx: number) => {
@@ -44,26 +49,56 @@ const Keyword: React.FC<IProps> = ({
     <section>
       {viewKeywords.length > 0 && (
         <>
-          <S_Title>Keywords</S_Title>
-          <S_KeywordListArea keywordLen={viewKeywords.length}>
-            {viewKeywords.map((keyword: string, i: number) => (
-              <S_KeywordList key={i} no={i}>
-                <S_Keyword onClick={handleClickMovePosition.bind(this, i)}>
-                  {keyword}
-                </S_Keyword>
-                <span>({viewCountList[i]})</span>
-                <S_DeleteKeywordBtn
+          <$title>
+            <span>단어 목록</span>
+            <div>
+              <p onClick={handleClickRemoveAllKeyword}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
                   width="24"
                   height="24"
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  onClick={handleClickRemoveKeyword.bind(this, keyword)}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
-                  <path d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z"></path>
-                </S_DeleteKeywordBtn>
-              </S_KeywordList>
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+                모두 지우기
+              </p>
+            </div>
+          </$title>
+          <$keywordListArea isSliceList={isSliceList}>
+            {viewKeywords.map((keyword: string, i: number) => (
+              <$keywordList key={i} no={i}>
+                <$keyword onClick={() => handleClickMovePosition(i)}>
+                  {keyword}
+                </$keyword>
+                <span>{viewCountList[i]}</span>
+                <$deleteKeywordBtn isSliceList={isSliceList}>
+                  <div onClick={() => handleClickRemoveKeyword(keyword)}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </div>
+                </$deleteKeywordBtn>
+              </$keywordList>
             ))}
-          </S_KeywordListArea>
+          </$keywordListArea>
         </>
       )}
     </section>
@@ -72,61 +107,99 @@ const Keyword: React.FC<IProps> = ({
 
 export default Keyword
 
-const S_Title = styled.h2`
-  padding-top: 40px;
-  border-top: 1px solid #eee;
-  font-size: 12px;
+const $title = styled.h2`
+  padding-top: 30px;
+  border-top: 1px solid #e6e6e6;
+  font-size: 14px;
   color: #444;
-  margin: 46px 0 5px;
+  margin: 36px 0 10px 1px;
+  line-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  div {
+    display: flex;
+    align-items: center;
+    margin-right: 2px;
+    p {
+      display: flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 400;
+      height: 28px;
+      background: #e6e6e6;
+      padding: 0 10px 0 7px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 1px solid #ddd;
+      &:hover {
+        background: #ddd;
+      }
+      svg {
+        margin-right: 3px;
+        width: 14px;
+        height: auto;
+      }
+    }
+  }
 `
 
-const S_KeywordListArea = styled.ul<{ keywordLen: number }>`
+const $keywordListArea = styled.ul<{ isSliceList: boolean }>`
   padding: 0;
   margin: 0;
   list-style: none;
 
-  span {
-    float: left;
-    padding: 5px 0;
-    margin: 0;
-    line-height: 34px;
-    font-size: 14px;
-    text-align: center;
-    width: 20%;
+  li {
+    display: flex;
+    align-items: center;
+    p {
+      width: calc(100% - 40px);
+    }
+    span {
+      display: inline-block;
+      width: 40px;
+      font-size: 14px;
+      padding: 0 5px 0 5px;
+      line-height: 18px;
+      overflow: hidden;
+      opacity: 1;
+    }
+    &:hover {
+      span {
+        transition: opacity 0.3s;
+        opacity: 0;
+      }
+    }
   }
 
   ${(props) =>
-    props.keywordLen > 10 &&
+    props.isSliceList &&
     `
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -1%;  
+    display: grid;
+    gap: 5px;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin-top: -1px;
     li {
-      flex-basis: 31%;
-      min-width: 31%;
-      margin: 1%;
+      &::before {
+        width: 4px;
+      }
       p {
-        font-size: 13px;
+        width: calc(100% - 30px);
+        font-size: 12px;
         line-height: 20px;
-        padding: 5px 5px 5px 15px;
-        width: 75px;
+        padding: 5px 5px 5px 12px;
       }
       span {
-        padding: 5px 5px 5px 20px;
-        width: 25px;
+        width: 30px;
         font-size: 10px;
-        padding: 5px 0;
-        line-height: 20px;
-        overflow: hidden;
-      }
-      svg {
-        transform: scale(0.5);
+        line-height: 12px;
       }
     }
   `}
 `
 
-const S_KeywordList = styled.li<{ no: number }>`
+const $keywordList = styled.li<{ no: number }>`
   position: relative;
   background: #fff;
   margin: 1.2% 0;
@@ -138,36 +211,77 @@ const S_KeywordList = styled.li<{ no: number }>`
     height: 100%;
     background: ${(props) => KEYWORDS_COLOR_SET[props.no % 10]};
   }
-  &:hover svg {
-    opacity: 1;
-  }
   &::after {
     content: "";
     display: block;
     clear: both;
   }
+  span {
+    color: #bbb;
+    text-align: center;
+  }
+
+  & > div {
+    opacity: 0;
+    transition: all 0.3s;
+  }
+
+  &:hover > div {
+    opacity: 1;
+  }
 `
 
-const S_Keyword = styled.p`
+const $keyword = styled.p`
   display: inline-block;
   padding: 5px 5px 5px 20px;
   margin: 0;
-  line-height: 34px;
-  font-size: 16px;
+  line-height: 30px;
+  font-size: 14px;
   cursor: pointer;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  float: left;
-  width: 80%;
 `
 
-const S_DeleteKeywordBtn = styled.svg`
+const $deleteKeywordBtn = styled.div<{ isSliceList: boolean }>`
   position: absolute;
-  top: -10px;
-  right: -10px;
-  transform: scale(0.7);
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0px;
+  right: 5px;
+  width: 30px;
+  height: 100%;
+  div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    background: #00dc9b;
+    border: 1px solid rgb(0, 209, 148);
+    border-radius: 15px;
+    svg {
+      width: 16px;
+      height: auto;
+      stroke: #fff;
+    }
+  }
+
+  ${(props) =>
+    props.isSliceList &&
+    `
+      right: 0px;
+      width: 30px;
+      div {
+        width: 20px;
+        height: 20px;
+        right: 0;
+
+        svg {
+          width: 12px;
+        }
+      }
+      `}
 `
