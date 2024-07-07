@@ -131,7 +131,9 @@ class WhaleRepo implements IWhaleRepo {
                   const targetPosition =
                     window.scrollY + targetEl.getBoundingClientRect().top
                   const marginScroll = 20
-                  wordPosition[i].push(targetPosition - marginScroll)
+                  wordPosition[i] = wordPosition[i].concat(
+                    targetPosition - marginScroll
+                  )
                 }
               }
             )
