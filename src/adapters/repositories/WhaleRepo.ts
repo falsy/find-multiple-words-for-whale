@@ -88,9 +88,11 @@ class WhaleRepo implements IWhaleRepo {
               ) {
                 node.outerHTML = node.textContent
               } else if (node.nodeName === "IFRAME" && node?.contentDocument) {
-                node.contentDocument.body.childNodes.forEach((node: any) => {
-                  deleteFmwElement(node)
-                })
+                if (node.contentDocument.body?.childNodes) {
+                  node.contentDocument.body.childNodes.forEach((node: any) => {
+                    deleteFmwElement(node)
+                  })
+                }
               } else if (
                 node.childNodes &&
                 node.childNodes.length &&
@@ -153,9 +155,11 @@ class WhaleRepo implements IWhaleRepo {
               ) {
                 replaceElement(node)
               } else if (node.nodeName === "IFRAME" && node?.contentDocument) {
-                node.contentDocument.body.childNodes.forEach((node: any) => {
-                  insertFmwElement(node)
-                })
+                if (node.contentDocument.body?.childNodes) {
+                  node.contentDocument.body.childNodes.forEach((node: any) => {
+                    insertFmwElement(node)
+                  })
+                }
               } else if (
                 node.childNodes &&
                 node.childNodes.length &&
