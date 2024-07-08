@@ -1,32 +1,25 @@
 {
   "manifest_version": 3,
   "name": "여러 단어 찾기",
-  "version": "1.5.5",
+  "version": "1.6.0",
   "description": "문서에서 여러 단어를 찾습니다.",
   "icons": {
     "32": "./imgs/fmw-icon-32.png",
-    "128": "./imgs/fmw-icon-128-v3.png"
+    "64": "./imgs/fmw-icon-64.png",
+    "128": "./imgs/fmw-icon-128.png",
+    "256": "./imgs/fmw-icon-256.png"
   },
   "sidebar_action": {
     "default_page": "./index.html",
     "default_icon": {
-      "32": "./imgs/fmw-icon-32.png"
+      "32": "./imgs/fmw-icon-32.png",
+      "64": "./imgs/fmw-icon-64.png",
+      "128": "./imgs/fmw-icon-128.png",
+      "256": "./imgs/fmw-icon-256.png"
     },
     "default_title": "단어 찾기",
     "use_navigation_bar": false
   },
-  "commands": {
-    "open-sidebar": {
-      "suggested_key": {
-        "default": "Alt+W",
-        "mac": "Alt+W"
-      },
-      "description": "사이드바 On/Off 단축키"
-    }
-  },
   "permissions": ["activeTab", "scripting", "storage"],
-  "host_permissions": ["http://*/*", "https://*/*"],
-  "background": {
-    "service_worker": "background.js"
-  }
+  "host_permissions": ["http://*/*", "https://*/*"]
 }

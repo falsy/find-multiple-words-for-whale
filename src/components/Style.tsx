@@ -8,6 +8,9 @@ const Style: React.FC = () => {
         ::placeholder {
           color: #ddd;
           transition: color 0.5s;
+          @media (prefers-color-scheme: dark) {
+            color: #666;
+          }
         }
 
         * {
@@ -31,6 +34,10 @@ const Style: React.FC = () => {
         body {
           padding: 15px;
           background: #f5f5f5;
+
+          @media (prefers-color-scheme: dark) {
+            background: rgb(41, 41, 41);
+          }
         }
 
         a {

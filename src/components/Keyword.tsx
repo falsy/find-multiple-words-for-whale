@@ -117,6 +117,11 @@ const $title = styled.h2`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  @media (prefers-color-scheme: dark) {
+    color: #ddd;
+    border-color: rgb(20, 20, 20);
+  }
+
   div {
     display: flex;
     align-items: center;
@@ -133,8 +138,19 @@ const $title = styled.h2`
       cursor: pointer;
       transition: all 0.3s;
       border: 1px solid #ddd;
+
+      @media (prefers-color-scheme: dark) {
+        background: rgb(35, 35, 35);
+        border-color: rgb(30, 30, 30);
+        color: #ddd;
+      }
+
       &:hover {
         background: #ddd;
+        @media (prefers-color-scheme: dark) {
+          background: rgb(25, 25, 25);
+          border-color: rgb(25, 25, 25);
+        }
       }
       svg {
         margin-right: 3px;
@@ -203,6 +219,12 @@ const $keywordList = styled.li<{ no: number }>`
   position: relative;
   background: #fff;
   margin: 1.2% 0;
+
+  @media (prefers-color-scheme: dark) {
+    background: rgb(70, 70, 70);
+    color: #ddd;
+  }
+
   &::before {
     content: "";
     position: absolute;
