@@ -53,7 +53,7 @@ const Search = ({ searchInput, keywords, setKeywords }: IProps) => {
     <$searchForm>
       <h2>
         단어 추가
-        <span>(쉼표","로 구분하여 여러 단어를 추가할 수도 있습니다.)</span>
+        <span>(쉼표로 구분하여 여러 단어를 추가할 수도 있습니다.)</span>
       </h2>
       <$searchBox>
         <input

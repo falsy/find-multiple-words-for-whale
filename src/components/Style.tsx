@@ -26,11 +26,6 @@ const Style: React.FC = () => {
           padding: 0;
         }
 
-        // html {
-        //   width: 400px;
-        //   background: #000;
-        // }
-
         body {
           padding: 15px;
           background: #f5f5f5;
@@ -45,10 +40,6 @@ const Style: React.FC = () => {
           color: inherit;
           letter-spacing: -0.3px;
           transition: all 0.3s;
-        }
-
-        a:hover {
-          text-decoration: underline;
         }
 
         p {
