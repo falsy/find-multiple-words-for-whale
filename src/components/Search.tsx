@@ -8,16 +8,11 @@ interface IProps {
 }
 
 const Search = ({ searchInput, keywords, setKeywords }: IProps) => {
-  const [keywordString, setKeywordString] = useState("")
   const [alertMessage, setAlertMessage] = useState("")
-
-  const handleOnChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setKeywordString(e.target.value)
-  }
 
   const addKeywords = () => {
     let isOneSyllable = false
-    const newKeywordList = keywordString
+    const newKeywordList = searchInput.current.value
       .split(",")
       .map((keyword: string) => {
         const trimKeyword = keyword.trim()
@@ -25,12 +20,12 @@ const Search = ({ searchInput, keywords, setKeywords }: IProps) => {
           isOneSyllable = true
           return ""
         }
-        return keyword
+        return trimKeyword
       })
       .filter(Boolean)
     const newKeywords = Array.from(new Set(keywords.concat(newKeywordList)))
     setKeywords(newKeywords)
-    setKeywordString("")
+    searchInput.current.value = ""
     if (isOneSyllable) {
       setAlertMessage(
         "영문, 숫자, 특수 문자는 두 글자 이상부터 추가할 수 있습니다."
@@ -64,12 +59,10 @@ const Search = ({ searchInput, keywords, setKeywords }: IProps) => {
         <input
           ref={searchInput}
           type="text"
-          onChange={handleOnChangeKeyword}
-          onKeyDown={handleKeyPressKeywords}
+          onKeyUp={handleKeyPressKeywords}
           placeholder="Nice, To, Meet, You"
-          // autoComplete="off"
           autoFocus={true}
-          value={keywordString}
+          defaultValue={""}
         />
         <$searchBtn onClick={handleClickAddKeyword}>
           <p>
