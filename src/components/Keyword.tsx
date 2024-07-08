@@ -163,7 +163,7 @@ const $title = styled.h2`
 
 const $keywordListArea = styled.ul<{ isSliceList: boolean }>`
   padding: 0;
-  margin: 0;
+  margin: 0 2px;
   list-style: none;
 
   li {
