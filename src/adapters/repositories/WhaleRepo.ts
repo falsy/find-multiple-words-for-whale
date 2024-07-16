@@ -46,7 +46,7 @@ class WhaleRepo implements IWhaleRepo {
         ["fmwActiveTabId", "fmwKeywords"],
         (data: any) => {
           const tabId = data["fmwActiveTabId"]
-          const fmwKeywords = data["fmwKeywords"]
+          const fmwKeywords: string[] = data["fmwKeywords"]
           const KEYWORDS_COLOR_SET = [
             "#AEDFDB",
             "#F4D94E",
@@ -57,9 +57,17 @@ class WhaleRepo implements IWhaleRepo {
             "#eabf88",
             "#e4bdf4",
             "#d0ef9f",
-            "#efee9f",
+            "#efee9f"
           ]
-          const EXCEPT_NODE_NAME = ["SCRIPT", "LINK", "STYLE", "MAT-ICON"]
+          const EXCEPT_NODE_NAME = [
+            "SCRIPT",
+            "NOSCRIPT",
+            "LINK",
+            "STYLE",
+            "MAT-ICON",
+            "svg",
+            "TEXTAREA"
+          ]
 
           let lazySearch = null
           let wordCount: number[] = null
@@ -72,102 +80,184 @@ class WhaleRepo implements IWhaleRepo {
             attributes: false,
             characterData: true,
             attributeOldValue: false,
-            characterDataOldValue: false,
+            characterDataOldValue: false
           }
           const observer = new MutationObserver(() => {
             if (lazySearch) clearTimeout(lazySearch)
-            lazySearch = setTimeout(searchActions, 1000)
+            lazySearch = setTimeout(searchActions, 500)
           })
+
+          // FMW 엘리먼트를 텍스트 노드로 변경
+          // 연속된 텍스트 노드를 하나의 텍스트 노드로 합침
+          const replaceClassNodeWithText = (node: Node) => {
+            if (!node.parentNode) return
+
+            const parentNode = node.parentNode
+            const textNode = document.createTextNode(node.textContent || "")
+            parentNode.replaceChild(textNode, node)
+
+            const mergeTextNode = []
+
+            parentNode.childNodes.forEach((replaceNode) => {
+              const lastNode = mergeTextNode[mergeTextNode.length - 1]
+              if (
+                lastNode &&
+                lastNode.nodeType === Node.TEXT_NODE &&
+                replaceNode.nodeType === Node.TEXT_NODE
+              ) {
+                lastNode.textContent += replaceNode.textContent
+              } else {
+                mergeTextNode.push(replaceNode)
+              }
+            })
+
+            while (parentNode?.firstChild) {
+              parentNode.removeChild(parentNode.firstChild)
+            }
+
+            mergeTextNode.forEach((newNode) => {
+              parentNode.appendChild(newNode)
+            })
+          }
 
           // FMW 엘리먼트 삭제
           const deleteFmwElement = (el: HTMLObjectElement) => {
-            el.childNodes.forEach((node: HTMLObjectElement) => {
+            const stack: Node[] = Array.from(el.childNodes)
+
+            while (stack.length > 0) {
+              const node = stack.pop() as HTMLObjectElement
+
               if (
-                String(node.className).indexOf("fmw-style-container") !== -1 &&
-                node.nodeName === "I"
+                node.nodeType === Node.ELEMENT_NODE &&
+                node.nodeName === "I" &&
+                node.classList.contains("fmw-style")
               ) {
-                node.outerHTML = node.textContent
+                replaceClassNodeWithText(node)
               } else if (node.nodeName === "IFRAME" && node?.contentDocument) {
-                if (node.contentDocument.body?.childNodes) {
-                  node.contentDocument.body.childNodes.forEach((node: any) => {
-                    deleteFmwElement(node)
-                  })
+                const iframeDocument = node.contentDocument
+                if (iframeDocument.body?.childNodes) {
+                  stack.push(...Array.from(iframeDocument.body.childNodes))
                 }
               } else if (
-                node.childNodes &&
-                node.childNodes.length &&
+                node.nodeType === Node.ELEMENT_NODE &&
+                node.childNodes.length > 0 &&
                 EXCEPT_NODE_NAME.indexOf(node.nodeName) === -1
               ) {
-                deleteFmwElement(node)
+                stack.push(...Array.from(node.childNodes))
               }
-            })
+            }
           }
 
           const compiledKeywords = fmwKeywords.map(
             (word: string, i: number) => ({
-              regex: new RegExp(word, "gim"),
+              keyword: word,
+              regex: new RegExp(word, "gi"),
               className: `fmw-style fmw-style-${i}`,
               style: `font-style: normal; display: inline; box-shadow: 1px 3px 3px rgba(0,0,0,0.2); border-radius: 4px; color: #000; white-space: initial; background: ${
                 KEYWORDS_COLOR_SET[i % KEYWORDS_COLOR_SET.length]
-              };`,
+              };`
             })
           )
 
           // FMW 엘리먼트 변환
           const replaceElement = (node: HTMLObjectElement) => {
-            const fmwElement = document.createElement("i")
-            fmwElement.className = "fmw-style-container"
-            fmwElement.style.fontStyle = "normal"
-            let nodeText = node.data
-            compiledKeywords.forEach(
-              ({ regex, className, style }, i: number) => {
-                if (regex.test(nodeText)) {
-                  nodeText = nodeText.replace(
-                    regex,
-                    `<i class="${className}" style="${style}">\$&</i>`
-                  )
+            let cacheFragment = [node.cloneNode(true)]
+            compiledKeywords.forEach(({ regex, className, style }, i) => {
+              const cacheFragByKeyword = []
+              cacheFragment.forEach((detailNode) => {
+                if (detailNode.nodeType !== Node.TEXT_NODE) {
+                  cacheFragByKeyword.push(detailNode)
+                } else {
+                  const textNode = detailNode.textContent
+                  const parts = textNode.split(regex)
+                  parts.forEach((part, j) => {
+                    if (j > 0) {
+                      const keywordEl = document.createElement("i")
+                      keywordEl.textContent = textNode.match(regex)[j - 1]
+                      keywordEl.className = className
+                      keywordEl.style.cssText = style
+                      cacheFragByKeyword.push(keywordEl)
 
-                  // 검색된 키워드 카운팅 및 위치값 기록
-                  wordCount[i] += 1
-                  const targetEl = node.parentElement
-                  const targetPosition =
-                    window.scrollY + targetEl.getBoundingClientRect().top
-                  const marginScroll = 20
-                  wordPosition[i] = wordPosition[i].concat(
-                    targetPosition - marginScroll
-                  )
+                      // 검색된 키워드 카운팅 및 위치값 기록
+                      wordCount[i] += 1
+                      const targetEl = node.parentElement
+                      const targetPosition =
+                        window.scrollY + targetEl.getBoundingClientRect().top
+                      const marginScroll = 20
+                      wordPosition[i] = [targetPosition - marginScroll].concat(
+                        wordPosition[i]
+                      )
+                    }
+                    cacheFragByKeyword.push(document.createTextNode(part))
+                  })
                 }
-              }
-            )
-            if (node.data !== nodeText) {
-              fmwElement.innerHTML = nodeText
-              node.parentNode.replaceChild(fmwElement, node)
+              })
+              cacheFragment = cacheFragByKeyword
+            })
+
+            const fragment = document.createDocumentFragment()
+
+            cacheFragment.forEach((replaceNode) => {
+              fragment.appendChild(replaceNode)
+            })
+
+            if (
+              !(
+                cacheFragment.length === 1 &&
+                cacheFragment[0].textContent === node.textContent
+              )
+            ) {
+              node.parentNode.replaceChild(fragment, node)
             }
+          }
+
+          const hasNoneFMWElement = (node: HTMLElement): boolean => {
+            return !(
+              node.nodeType === Node.ELEMENT_NODE &&
+              node.nodeName === "I" &&
+              node.classList.contains("fmw-style")
+            )
+          }
+
+          const hasStyleBlock = (node: HTMLElement): boolean => {
+            const styles = window.getComputedStyle(node)
+            return styles.display !== "none" && styles.visibility !== "hidden"
           }
 
           // FMW 엘리먼트 검색
           const insertFmwElement = (el: HTMLObjectElement) => {
-            el.childNodes.forEach((node: HTMLObjectElement) => {
+            const stack: Node[] = Array.from(el.childNodes)
+
+            while (stack.length > 0) {
+              const node = stack.pop() as HTMLElement
+
               if (
-                node.nodeName === "#text" &&
-                EXCEPT_NODE_NAME.indexOf(node.parentNode.nodeName) === -1 &&
-                node.data.replace(/\t|\n| /gm, "") !== ""
+                node.nodeType === Node.TEXT_NODE &&
+                EXCEPT_NODE_NAME.indexOf(node.parentNode?.nodeName || "") ===
+                  -1 &&
+                node.textContent?.replace(/\t|\n| /gm, "") !== ""
               ) {
-                replaceElement(node)
-              } else if (node.nodeName === "IFRAME" && node?.contentDocument) {
-                if (node.contentDocument.body?.childNodes) {
-                  node.contentDocument.body.childNodes.forEach((node: any) => {
-                    insertFmwElement(node)
-                  })
+                replaceElement(node as HTMLObjectElement)
+              } else if (
+                node.nodeType === Node.ELEMENT_NODE &&
+                node.nodeName === "IFRAME" &&
+                (node as HTMLIFrameElement).contentDocument
+              ) {
+                const iframeDocument = (node as HTMLIFrameElement)
+                  .contentDocument
+                if (iframeDocument.body?.childNodes) {
+                  stack.push(...Array.from(iframeDocument.body.childNodes))
                 }
               } else if (
-                node.childNodes &&
-                node.childNodes.length &&
-                EXCEPT_NODE_NAME.indexOf(node.nodeName) === -1
+                node.nodeType === Node.ELEMENT_NODE &&
+                node.childNodes.length > 0 &&
+                EXCEPT_NODE_NAME.indexOf(node.nodeName) === -1 &&
+                hasNoneFMWElement(node) &&
+                hasStyleBlock(node)
               ) {
-                insertFmwElement(node)
+                stack.push(...Array.from(node.childNodes))
               }
-            })
+            }
           }
 
           const searchActions = () => {
@@ -177,20 +267,21 @@ class WhaleRepo implements IWhaleRepo {
               ;(window as any).fmwMutationObserver.disconnect()
             }
 
-            // 엘리먼트 순회하며 FMW 엘리먼트 삭제
+            // Body의 자식 노드를 순회하며 FMW 엘리먼트 삭제
             document.body.childNodes.forEach(deleteFmwElement)
 
+            // 단어의 개수와 포지션값 초기화
             wordCount = Array(fmwKeywords.length).fill(0)
             wordPosition = Array(fmwKeywords.length).fill([])
 
-            // 엘리먼트 순회하며 FMW 엘리먼트 적용
+            // Body의 자식 노드를 순회하며 FMW 엘리먼트 적용
             document.body.childNodes.forEach(insertFmwElement)
 
             // 검색어에 따른 FMW 엘리먼트 카운팅 및 포지션 캐시
             ;(window as any).whale.runtime.sendMessage({
               tabId: tabId,
               count: wordCount,
-              position: wordPosition,
+              position: wordPosition
             })
 
             // DOM 변화 감시 시작

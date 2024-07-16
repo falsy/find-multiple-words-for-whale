@@ -1,4 +1,4 @@
-import { useState } from "react"
+// import { useState } from "react"
 import styled from "@emotion/styled"
 
 interface IProps {
@@ -8,45 +8,32 @@ interface IProps {
 }
 
 const Search = ({ searchInput, keywords, setKeywords }: IProps) => {
-  const [alertMessage, setAlertMessage] = useState("")
+  // const [alertMessage, setAlertMessage] = useState("")
 
   const addKeywords = () => {
-    let isOneSyllable = false
     const newKeywordList = searchInput.current.value
       .split(",")
-      .map((keyword: string) => {
-        const trimKeyword = keyword.trim()
-        if (trimKeyword.length === 1 && /[^가-힣]/g.test(trimKeyword)) {
-          isOneSyllable = true
-          return ""
-        }
-        return trimKeyword
-      })
+      .map((keyword: string) => keyword.trim())
       .filter(Boolean)
     const newKeywords = Array.from(new Set(keywords.concat(newKeywordList)))
     setKeywords(newKeywords)
     searchInput.current.value = ""
-    if (isOneSyllable) {
-      setAlertMessage(
-        "영문, 숫자, 특수 문자는 두 글자 이상부터 추가할 수 있습니다."
-      )
-    }
   }
 
   const handleKeyPressKeywords = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      setAlertMessage("")
+      // setAlertMessage("")
       addKeywords()
     }
   }
 
   const handleClickAddKeyword = () => {
-    setAlertMessage("")
+    // setAlertMessage("")
     addKeywords()
   }
 
   const handleClickAlert = () => {
-    setAlertMessage("")
+    // setAlertMessage("")
   }
 
   return (
@@ -84,7 +71,7 @@ const Search = ({ searchInput, keywords, setKeywords }: IProps) => {
           </p>
         </$searchBtn>
       </$searchBox>
-      {alertMessage && (
+      {/* {alertMessage && (
         <$alertMessage>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +105,7 @@ const Search = ({ searchInput, keywords, setKeywords }: IProps) => {
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </$alertMessage>
-      )}
+      )} */}
     </$searchForm>
   )
 }
@@ -219,27 +206,27 @@ const $searchBtn = styled.div`
   }
 `
 
-const $alertMessage = styled.div`
-  background: #fff7df;
-  color: #cda126;
-  border: 1px solid #f7e5ad;
-  padding: 8px 8px 8px 12px;
-  border-radius: 6px;
-  line-height: 20px;
-  display: flex;
-  align-items: center;
-  svg:first-of-type {
-    width: 18px;
-    height: auto;
-    margin-right: 7px;
-  }
-  p {
-    font-size: 11px;
-    width: 100%;
-  }
-  p + svg {
-    width: 18px;
-    height: auto;
-    cursor: pointer;
-  }
-`
+// const $alertMessage = styled.div`
+//   background: #fff7df;
+//   color: #cda126;
+//   border: 1px solid #f7e5ad;
+//   padding: 8px 8px 8px 12px;
+//   border-radius: 6px;
+//   line-height: 20px;
+//   display: flex;
+//   align-items: center;
+//   svg:first-of-type {
+//     width: 18px;
+//     height: auto;
+//     margin-right: 7px;
+//   }
+//   p {
+//     font-size: 11px;
+//     width: 100%;
+//   }
+//   p + svg {
+//     width: 18px;
+//     height: auto;
+//     cursor: pointer;
+//   }
+// `

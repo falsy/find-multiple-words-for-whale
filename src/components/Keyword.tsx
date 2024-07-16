@@ -15,7 +15,7 @@ const Keyword: React.FC<IProps> = ({
   keywords,
   setKeywords,
   countList,
-  positionList,
+  positionList
 }) => {
   const [cacheIdx, setCacheIdx] = useState(0)
   const [cacheCnt, setCacheCnt] = useState(0)
