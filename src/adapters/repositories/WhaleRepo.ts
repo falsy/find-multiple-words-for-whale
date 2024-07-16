@@ -121,29 +121,6 @@ class WhaleRepo implements IWhaleRepo {
           }
 
           // FMW 엘리먼트 삭제
-          // const deleteFmwElement = (el: HTMLObjectElement) => {
-          //   el.childNodes.forEach((node: HTMLObjectElement) => {
-          //     if (
-          //       node.nodeType === Node.ELEMENT_NODE &&
-          //       node.nodeName === "I" &&
-          //       node.classList.contains("fmw-style")
-          //     ) {
-          //       replaceClassNodeWithText(node)
-          //     } else if (node.nodeName === "IFRAME" && node?.contentDocument) {
-          //       if (node.contentDocument.body?.childNodes) {
-          //         node.contentDocument.body.childNodes.forEach((node: any) => {
-          //           deleteFmwElement(node)
-          //         })
-          //       }
-          //     } else if (
-          //       node.childNodes &&
-          //       node.childNodes.length &&
-          //       EXCEPT_NODE_NAME.indexOf(node.nodeName) === -1
-          //     ) {
-          //       deleteFmwElement(node)
-          //     }
-          //   })
-          // }
           const deleteFmwElement = (el: HTMLObjectElement) => {
             const stack: Node[] = Array.from(el.childNodes)
 
@@ -169,10 +146,6 @@ class WhaleRepo implements IWhaleRepo {
                 stack.push(...Array.from(node.childNodes))
               }
             }
-
-            console.log(
-              "----------------------------end delete----------------------------"
-            )
           }
 
           const compiledKeywords = fmwKeywords.map(
@@ -189,7 +162,7 @@ class WhaleRepo implements IWhaleRepo {
           // FMW 엘리먼트 변환
           const replaceElement = (node: HTMLObjectElement) => {
             let cacheFragment = [node.cloneNode(true)]
-            compiledKeywords.forEach(({ regex, className, style }) => {
+            compiledKeywords.forEach(({ regex, className, style }, i) => {
               const cacheFragByKeyword = []
               cacheFragment.forEach((detailNode) => {
                 if (detailNode.nodeType !== Node.TEXT_NODE) {
@@ -197,13 +170,23 @@ class WhaleRepo implements IWhaleRepo {
                 } else {
                   const textNode = detailNode.textContent
                   const parts = textNode.split(regex)
-                  parts.forEach((part, i) => {
-                    if (i > 0) {
+                  parts.forEach((part, j) => {
+                    if (j > 0) {
                       const keywordEl = document.createElement("i")
-                      keywordEl.textContent = textNode.match(regex)[i - 1]
+                      keywordEl.textContent = textNode.match(regex)[j - 1]
                       keywordEl.className = className
                       keywordEl.style.cssText = style
                       cacheFragByKeyword.push(keywordEl)
+
+                      // 검색된 키워드 카운팅 및 위치값 기록
+                      wordCount[i] += 1
+                      const targetEl = node.parentElement
+                      const targetPosition =
+                        window.scrollY + targetEl.getBoundingClientRect().top
+                      const marginScroll = 20
+                      wordPosition[i] = [targetPosition - marginScroll].concat(
+                        wordPosition[i]
+                      )
                     }
                     cacheFragByKeyword.push(document.createTextNode(part))
                   })
@@ -237,36 +220,6 @@ class WhaleRepo implements IWhaleRepo {
           }
 
           // FMW 엘리먼트 검색
-          // const insertFmwElement = (el: HTMLObjectElement) => {
-          //   el.childNodes.forEach((node: HTMLElement) => {
-          //     if (
-          //       node.nodeType === Node.TEXT_NODE &&
-          //       EXCEPT_NODE_NAME.indexOf(node.parentNode.nodeName) === -1 &&
-          //       node.textContent?.replace(/\t|\n| /gm, "") !== ""
-          //     ) {
-          //       replaceElement(node as HTMLObjectElement)
-          //     } else if (
-          //       node.nodeType === Node.ELEMENT_NODE &&
-          //       node.nodeName === "IFRAME" &&
-          //       (node as HTMLIFrameElement).contentDocument
-          //     ) {
-          //       const iframeDocument = (node as HTMLIFrameElement)
-          //         .contentDocument
-          //       if (iframeDocument.body?.childNodes) {
-          //         iframeDocument.body.childNodes.forEach((childNode) => {
-          //           insertFmwElement(childNode as HTMLObjectElement)
-          //         })
-          //       }
-          //     } else if (
-          //       node.childNodes &&
-          //       node.childNodes.length &&
-          //       EXCEPT_NODE_NAME.indexOf(node.nodeName) === -1 &&
-          //       !hasFMWElement(node)
-          //     ) {
-          //       insertFmwElement(node as HTMLObjectElement)
-          //     }
-          //   })
-          // }
           const insertFmwElement = (el: HTMLObjectElement) => {
             const stack: Node[] = Array.from(el.childNodes)
 
