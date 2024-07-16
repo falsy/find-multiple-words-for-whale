@@ -211,12 +211,17 @@ class WhaleRepo implements IWhaleRepo {
             }
           }
 
-          const hasFMWElement = (node: HTMLElement): boolean => {
-            return (
+          const hasNoneFMWElement = (node: HTMLElement): boolean => {
+            return !(
               node.nodeType === Node.ELEMENT_NODE &&
               node.nodeName === "I" &&
               node.classList.contains("fmw-style")
             )
+          }
+
+          const hasStyleBlock = (node: HTMLElement): boolean => {
+            const styles = window.getComputedStyle(node)
+            return styles.display !== "none" && styles.visibility !== "hidden"
           }
 
           // FMW 엘리먼트 검색
@@ -247,7 +252,8 @@ class WhaleRepo implements IWhaleRepo {
                 node.nodeType === Node.ELEMENT_NODE &&
                 node.childNodes.length > 0 &&
                 EXCEPT_NODE_NAME.indexOf(node.nodeName) === -1 &&
-                !hasFMWElement(node)
+                hasNoneFMWElement(node) &&
+                hasStyleBlock(node)
               ) {
                 stack.push(...Array.from(node.childNodes))
               }
