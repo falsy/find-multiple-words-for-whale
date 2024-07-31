@@ -13,7 +13,3 @@
 ## 스크린샷
 
 ![Capture](/src/imgs/screenshot-1.png)
-
-## 라이센스
-
-자세한 내용은 LICENSE 파일을 참조하세요.

@@ -132,7 +132,7 @@ const $title = styled.h2`
       font-size: 11px;
       font-weight: 400;
       height: 28px;
-      background: #e6e6e6;
+      background: #e9e9e9;
       padding: 0 10px 0 7px;
       border-radius: 12px;
       cursor: pointer;

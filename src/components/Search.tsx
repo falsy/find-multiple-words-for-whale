@@ -1,4 +1,4 @@
-// import { useState } from "react"
+import { useState, useEffect } from "react"
 import styled from "@emotion/styled"
 
 interface IProps {
@@ -8,7 +8,17 @@ interface IProps {
 }
 
 const Search = ({ searchInput, keywords, setKeywords }: IProps) => {
-  // const [alertMessage, setAlertMessage] = useState("")
+  const [isShiftPressed, setIsShiftPressed] = useState(false)
+
+  const newKeywords = () => {
+    const newKeywordList = searchInput.current.value
+      .split(",")
+      .map((keyword: string) => keyword.trim())
+      .filter(Boolean)
+    const newKeywords = Array.from(new Set(newKeywordList))
+    setKeywords(newKeywords)
+    searchInput.current.value = ""
+  }
 
   const addKeywords = () => {
     const newKeywordList = searchInput.current.value
@@ -22,26 +32,41 @@ const Search = ({ searchInput, keywords, setKeywords }: IProps) => {
 
   const handleKeyPressKeywords = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      // setAlertMessage("")
-      addKeywords()
+      if (isShiftPressed) {
+        newKeywords()
+      } else {
+        addKeywords()
+      }
     }
   }
 
   const handleClickAddKeyword = () => {
-    // setAlertMessage("")
     addKeywords()
   }
 
-  const handleClickAlert = () => {
-    // setAlertMessage("")
-  }
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Shift") {
+        setIsShiftPressed(true)
+      }
+    }
+
+    const handleKeyUp = () => {
+      setIsShiftPressed(false)
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    window.addEventListener("keyup", handleKeyUp)
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+      window.removeEventListener("keyup", handleKeyUp)
+    }
+  }, [])
 
   return (
     <$searchForm>
-      <h2>
-        단어 추가
-        <span>(쉼표로 구분하여 여러 단어를 추가할 수도 있습니다.)</span>
-      </h2>
+      <h2>단어 추가</h2>
       <$searchBox>
         <input
           ref={searchInput}
@@ -52,65 +77,48 @@ const Search = ({ searchInput, keywords, setKeywords }: IProps) => {
           defaultValue={""}
         />
         <$searchBtn onClick={handleClickAddKeyword}>
-          <p>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            추가
-          </p>
+          {isShiftPressed ? (
+            <p>새로 찾기</p>
+          ) : (
+            <p>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              추가
+            </p>
+          )}
         </$searchBtn>
+        <$psTextBox>
+          <p>
+            - [Shift]를 누르고 검색하면 기존의 단어 목록을 지우고 새로 찾습니다.
+          </p>
+          <p>- 쉼표로 구분하여 여러 단어를 한번에 추가할 수 있습니다.</p>
+        </$psTextBox>
       </$searchBox>
-      {/* {alertMessage && (
-        <$alertMessage>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-            <line x1="12" y1="9" x2="12" y2="13" />
-            <line x1="12" y1="17" x2="12.01" y2="17" />
-          </svg>
-          <p>{alertMessage}</p>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            onClick={handleClickAlert}
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </$alertMessage>
-      )} */}
     </$searchForm>
   )
 }
 
 export default Search
+
+const $psTextBox = styled.div`
+  padding-top: 15px;
+  line-height: 20px;
+  @media (prefers-color-scheme: dark) {
+    color: #ddd;
+  }
+`
 
 const $searchForm = styled.section`
   width: 100%;
