@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "여러 단어 찾기",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "웹 페이지에서 여러 단어를 하이라이팅합니다.",
   "icons": {
     "32": "./imgs/fmw-icon-32.png",
